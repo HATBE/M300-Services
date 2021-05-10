@@ -1,10 +1,33 @@
 # Einleitung allgemein
 Einleitung allgemein (Erklärungen zum ganzen M300-Projekt)
 
+Aufgaben: https://github.com/mc-b/M300/tree/master/10-Toolumgebung
+
 # Inhaltsverszeichnis
 
 ## 10-Toolumgebungen 
-Text
+
+### 01 - GitHub
+#### Account
+
+Github accout erstellt: https://github.com/AaronGen
+
+#### Repository
+
+Repository erstelen:
+Oben rechts auf + -> New Repository -> Name: 
+M300-Services
+Description: Microservices / Containerumgebunge
+Status: Private
+-> Create Repository
+
+#### SSH-KEY
+
+> **$ ssh-keygen -t rsa -b 4096**<br><br>
+Generating public/private rsa key pair.<br><br>
+Enter a file in which to save the key (~/.ssh/id_rsa): **[Press enter]**<br><br>
+Enter passphrase (empty for no passphrase): **[Passwort]**<br>
+Enter same passphrase again: **[Passwort wiederholen]**
 
 ## 20-Infrastruktur
 Text
