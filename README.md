@@ -7,28 +7,42 @@ Aufgaben: https://github.com/mc-b/M300/tree/master/10-Toolumgebung
 
 ## 10-Toolumgebungen 
 
-
 ### 01 - GitHub
-#### Account
+#### <b>Account</b>
 
 Github accout erstellt: https://github.com/AaronGen
 
-#### Repository
+#### <b>Repository</b>
+<br>
+Repository erstellen:
+Oben Rechts auf "+" -> 
+<br>
+<b>New Repository</b> -> 
+<br>
+<b>Name</b>: M300-Services
+<br>
+<b>Description:</b> Microservices / Containerumgebung
+<br>
+<b>Status:</b> Private
+<br>
+-> <b>Create Repository</b>
+<br><br>
 
-Repository erstelen:
-Oben rechts auf + -> New Repository -> Name: 
-M300-Services
-Description: Microservices / Containerumgebunge
-Status: Private
--> Create Repository
-
-#### SSH-KEY
+#### <b>SSH-KEY</b>
 
 > **$ ssh-keygen -t rsa -b 4096**<br><br>
 Generating public/private rsa key pair.<br><br>
-Enter a file in which to save the key (~/.ssh/id_rsa): **[Press enter]**<br><br>
+Enter a file in which to save the key (~/.ssh/id_rsa): ~/.ssh/M300_key<br><br>
 Enter passphrase (empty for no passphrase): **[Passwort]**<br>
 Enter same passphrase again: **[Passwort wiederholen]**
+
+<img src="images/y2RjRN1.png">
+
+<img src="images/yMGMdSe.png">
+
+<img src="images/92RsF4D.png">
+
+<img src="images/Rzy4krY.png">
 
 ## 20-Infrastruktur
 Text
