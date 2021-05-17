@@ -33,6 +33,11 @@ Repository erstellen
 <b>Status:</b> Private
 <br>
 
+Reposoory Klonen
+```Shell
+$ git clone <Repository>
+```
+
 
 ### 01.3 SSH-KEY
 
@@ -63,6 +68,20 @@ Der Name kann frei gewählt werden.
 <br>
 <img src="images/Rzy4krY.png">
 
+Wenn der Key nun in Github eingetragen ist, muss er auf dem Lokalen PC noch mit dem Repository verbunden werden.
+
+```Shell 
+$ ssh git@github.com -T -i ~/.ssh/<dein KEY>
+Hi User! You've successfully authenticated, but GitHub does not provide shell access.
+Connection to github.com closed.
+
+$ cd /pfad/zu/repository
+$ git init
+$ git remote add origin https://github.com/<dein Username>/<dein GIT Repository>
+$ git remote set-url git@github.com:<dein Username>/<dein GIT Repository>
+$ git pull origin master
+```
+
 ### 01.4 Git Installieren
 <b>Linux</b>
 
@@ -72,6 +91,13 @@ apt install git
 <b>Windows</b>
 
 Wenn Git unter Windows Installiert werden soll "Would not recommend", hier downloaden -> https://git-scm.com/downloads
+
+<b>Konfiguration</b>
+
+```Shell 
+$ git config --global user.name "<username>"
+$ git config --global user.email "<e-mail>"
+```
 # 20-Infrastruktur
 Text
 
