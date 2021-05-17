@@ -72,7 +72,7 @@ Wenn der Key nun in Github eingetragen ist, muss er auf dem Lokalen PC noch mit 
 
 ```Shell 
 $ ssh git@github.com -T -i ~/.ssh/<dein KEY>
-Hi User! You've successfully authenticated, but GitHub does not provide shell access.
+Hi User! Youve successfully authenticated, but GitHub does not provide shell access.
 Connection to github.com closed.
 
 $ cd /pfad/zu/repository
