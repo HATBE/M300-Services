@@ -5,8 +5,8 @@ Aufgaben: https://github.com/mc-b/M300/tree/master/10-Toolumgebung
 
 # 10-Toolumgebungen
 
-## 01 - GitHub
-### 01.1 Account
+## 01 - Git
+### 01.1 - Github Account
 
 
 1. Auf www.github.com ein Benutzerkonto erstellen (Angabe von Username, E-Mail und Passwort)
@@ -15,7 +15,7 @@ Aufgaben: https://github.com/mc-b/M300/tree/master/10-Toolumgebung
 
 Github account erstellt: https://github.com/AaronGen
 
-### 01.2 Repository
+### 01.2 - Repository
 
 Repository erstellen
 1. Anmelden unter www.github.com
@@ -33,13 +33,25 @@ Repository erstellen
 <b>Status:</b> Private
 <br>
 
-Reposoory Klonen
+Repository Klonen
 ```Shell
 $ git clone <Repository>
 ```
-
-
-### 01.3 SSH-KEY
+Pullen
+```Shell
+$ git pull
+```
+Status prüfen
+```Shell
+$ git status
+```
+Status pushen
+```Shell
+$ git add .
+$ git commit -m "<nachricht>"
+$ git push
+```
+### 01.3 - SSH-KEY
 
 Zuerst muss in der Konsole einen SSH Key erstellt werden
 </br>
@@ -82,7 +94,8 @@ $ git remote set-url git@github.com:<dein Username>/<dein GIT Repository>
 $ git pull origin master
 ```
 
-### 01.4 Git Installieren
+### 01.4 - Git
+<b>Installieren</b><br>
 <b>Linux</b>
 
 ```Shell 
@@ -98,6 +111,26 @@ Wenn Git unter Windows Installiert werden soll "Would not recommend", hier downl
 $ git config --global user.name "<username>"
 $ git config --global user.email "<e-mail>"
 ```
+## 02 - Virtualbox
+### 02.1 - Installation
+<b>Linux</b>
+```Shell 
+$ apt install virtualbox
+```
+<b>Windows</b>
+
+Folgendes File Installieren und dem Wizzard folgen <br>
+-> https://download.virtualbox.org/virtualbox/6.1.22/VirtualBox-6.1.22-144080-Win.exe
+
+### 02.2 - VM erstellen
+Daten: 
+Name: M300_Ubuntu_20.04_Desktop\
+Typ: Linux x64\
+RAM: 2048 MB\
+Festplatte: 10 GB\
+Festplatten Typ: VMDK → dynamisch alloziert
+
+
 # 20-Infrastruktur
 Text
 
