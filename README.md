@@ -206,17 +206,7 @@ Direkt ssh verbindung zu Box
 $ vagrant ssh 
 oder: vagrant ssh (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
 ``` 
-
-<b>Vagrantfile</b>
-Das Vagrantfile befindet sich in dem Ordner in dem man den Befehl vagrant init ausgeführt hat, es sieht ohne weitere Optionen folgendermassen aus.
-
-```Shell 
-Vagrant.configure("2") do |config|
-  config.vm.box = "user/box"
-```
-
-Die vagrant VMs werden standartmässig in Virtualbox laufen gelassen, solange man dies im Vagrantfile nicht ändert.
-<img src="images/Gh5bjp2.png">
+mit "exit" kommt man wieder aus der SSH Session
 
 Um den Status einer Box herauszufinden.
 ```Shell 
@@ -247,6 +237,83 @@ Current machine states:
 
 default                   saved (virtualbox)
 ```
+
+<b>Vagrantfile</b>
+Das Vagrantfile befindet sich in dem Ordner in dem man den Befehl vagrant init ausgeführt hat, es sieht ohne weitere Optionen folgendermassen aus.
+
+```Shell 
+Vagrant.configure("2") do |config|
+  config.vm.box = "user/box"
+end
+```
+
+Die vagrant VMs werden standartmässig in Virtualbox laufen gelassen, solange man dies im Vagrantfile nicht ändert.
+<img src="images/Gh5bjp2.png">
+
+Nach dem Editieren des vagrantfiles, muss folgender befehl ausgeführt werden
+```Shell 
+$ vagrant reload
+``` 
+
+Um ein Hostname zu geben, muss man das Vagrantfile folgendermasen editieren
+unter config.vm.box = ""
+```Shell 
+config.vm.hostname = "dein Hostname"
+```
+
+Um eine IP Adresse zu setzen, muss man das Vagrantfile folgendermasen editieren
+```Shell 
+config.vm.network "private_network", ip: "10.9.8.7"
+```
+
+<b>Mehrere Vms erstellen</b>\
+Mit Vagrant ist es möglich mehrere Vms mit nur einem File zu erstellen, dies Zeige ich hier anhand eines Beispieles.
+
+```Shell 
+$ cd /path/to/vmstorage
+$ mkdir multivm
+$ cd multivm
+$ vagrant init ubuntu/xenial64
+$ nano Vagrantfile
+```
+```Shell 
+FilePath: /path/to/vmstorage/multivm/Vagrantfile
+
+-------------------------------------------------
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64" #Select box Image
+
+  # Define Box 1
+  config.vm.define "box1" do |box1|
+   box1.vm.hostname = "box1"
+   box1.vm.network "private_network", ip: "10.9.8.1"
+  end
+
+  # Define Box 2
+  config.vm.define "box2" do |box2|
+   box2.vm.hostname = "box2"
+   box2.vm.network "private_network", ip: "10.9.8.2"
+  end
+
+end
+```
+Um die VMs zu starten
+```Shell 
+$ vagrant up
+umd nur eine der beiden zu starten: vagrant up box1 oder box2
+```
+Nun laufen die beiden VMs und sie können auch miteinander kommunizieren.\
+<img src="images/IAxxDO5.png">
+
+Um eine der beiden VMs zu kontrollieren
+```Shell 
+$ vagrant ssh box1
+oder
+$ vagrant ssh box2
+```
+
+<img src="images/5Nii12Y.png">
 
 # 20-Infrastruktur
 Text
