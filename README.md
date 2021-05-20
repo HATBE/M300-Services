@@ -94,7 +94,8 @@ apt install git
 ```
 <b>Windows</b>
 
-Wenn Git unter Windows Installiert werden soll "Would not recommend", hier downloaden -> https://git-scm.com/downloads
+Wenn Git unter Windows Installiert werden soll "Would not recommend", hier downloaden\
+https://git-scm.com/downloads
 
 <b>Konfiguration</b>
 
@@ -111,7 +112,7 @@ $ apt install virtualbox
 <b>Windows</b>
 
 Folgendes File Installieren und dem Wizzard folgen\
--> https://download.virtualbox.org/virtualbox/6.1.22/VirtualBox-6.1.22-144080-Win.exe
+https://download.virtualbox.org/virtualbox/6.1.22/VirtualBox-6.1.22-144080-Win.exe
 
 ### 02.2 - VM erstellen
 Daten: 
@@ -137,13 +138,115 @@ $ apt install synaptic
 <b>Linux</b>
 
 ```Shell 
-apt install vagrant
+$ apt install vagrant
 ```
 
 <b>Windows</b>\
 Auf folgenden Link drücken, Downloaden und dem Wizzard folgen:\
-d
+https://www.vagrantup.com/downloads
 
+### 03.2 - Bedienung
+<b>Einfache VM Erstellen</b>
+1. Verzeichniss erstellen
+
+```Shell 
+$ mkdir ~/vagrant/box1
+```
+2. VM Initialisieren\
+**Wichtig, dieser befehl muss im eben erstellten Verzeichniss ausgeführt werden
+
+```Shell 
+$ vagrant init <user>/<box>
+    Beispiel für box:
+        vagrant init ubuntu/xenial64
+```
+3. Vagrant VM starten\
+**Wichtig, dieser befehl muss im eben erstellten Verzeichniss ausgeführt werden
+```Shell 
+$ vagrant up
+```
+<b>Vagrant Befehle und Konfiguraionen</b>
+
+Vagrant box herunterladen
+```Shell 
+$ vagrant box add <user>/<Box>
+```
+Die Boxen könenn hier gefunden werden: https://app.vagrantup.com/boxes/search
+
+Box Initialisieren
+```Shell 
+$ vagrant init <user>/<box>
+```
+
+Box Starten
+```Shell 
+$ vagrant up
+oder: vagrant up (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
+```
+
+Box Stoppen
+```Shell 
+$ vagrant halt
+oder: vagrant halt (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
+```
+
+Box Anhalten
+```Shell 
+$ vagrant suspend
+oder: vagrant suspend (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
+```
+
+Box Löschen
+```Shell 
+$ vagrant destroy
+```
+
+Direkt ssh verbindung zu Box
+```Shell 
+$ vagrant ssh 
+oder: vagrant ssh (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
+``` 
+
+<b>Vagrantfile</b>
+Das Vagrantfile befindet sich in dem Ordner in dem man den Befehl vagrant init ausgeführt hat, es sieht ohne weitere Optionen folgendermassen aus.
+
+```Shell 
+Vagrant.configure("2") do |config|
+  config.vm.box = "user/box"
+```
+
+Die vagrant VMs werden standartmässig in Virtualbox laufen gelassen, solange man dies im Vagrantfile nicht ändert.
+<img src="images/Gh5bjp2.png">
+
+Um den Status einer Box herauszufinden.
+```Shell 
+$ vagrant status
+oder: vagrant status (<boxname>) (wenn mehrere boxen im Vagantfile vorhanden sind)
+```
+
+Dies gibt folgenden output
+
+```Shell 
+Current machine states:
+
+default                   running (virtualbox)
+```
+
+oder 
+
+```Shell 
+Current machine states:
+
+default                   poweroff (virtualbox)
+```
+
+oder 
+
+```Shell 
+Current machine states:
+
+default                   saved (virtualbox)
+```
 
 # 20-Infrastruktur
 Text
