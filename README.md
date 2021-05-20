@@ -26,12 +26,9 @@ Repository erstellen
 6. Haken bei Initialize this repository with a README setzen
 7. Auf Create repository klicken
 
-<b>Name</b>: M300-Services
-<br>
-<b>Description:</b> Microservices / Containerumgebung
-<br>
+<b>Name</b>: M300-Services\
+<b>Description:</b> Microservices / Containerumgebung\
 <b>Status:</b> Private
-<br>
 
 Repository Klonen
 ```Shell
@@ -54,7 +51,6 @@ $ git push
 ### 01.3 - SSH-KEY
 
 Zuerst muss in der Konsole einen SSH Key erstellt werden
-</br>
 
 ```Shell 
 $ ssh-keygen -t rsa -b 4096
@@ -65,19 +61,14 @@ Enter passphrase (empty for no passphrase): [Passwort]
 Enter same passphrase again: [Passwort wiederholen]
 ```
 
-Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.
-<br>
-<img src="images/y2RjRN1.png">
-<br>
-Wenn der Public key nun in der Konsole angezeigt wird, diesen Kopieren.
-<br>
+Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.\
+<img src="images/y2RjRN1.png">\
+Wenn der Public key nun in der Konsole angezeigt wird, diesen Kopieren.\
 <img src="images/yMGMdSe.png">
 
-<img src="images/92RsF4D.png">
-<br>
-Den zuvor kopierten Public Key hier unter KEY Pasten.<br>
-Der Name kann frei gewählt werden.
-<br>
+<img src="images/92RsF4D.png">\
+Den zuvor kopierten Public Key hier unter KEY Pasten.\
+Der Name kann frei gewählt werden.\
 <img src="images/Rzy4krY.png">
 
 Wenn der Key nun in Github eingetragen ist, muss er auf dem Lokalen PC noch mit dem Repository verbunden werden.
@@ -95,7 +86,7 @@ $ git pull origin master
 ```
 
 ### 01.4 - Git
-<b>Installieren</b><br>
+<b>Installieren</b>\
 <b>Linux</b>
 
 ```Shell 
@@ -119,7 +110,7 @@ $ apt install virtualbox
 ```
 <b>Windows</b>
 
-Folgendes File Installieren und dem Wizzard folgen <br>
+Folgendes File Installieren und dem Wizzard folgen\
 -> https://download.virtualbox.org/virtualbox/6.1.22/VirtualBox-6.1.22-144080-Win.exe
 
 ### 02.2 - VM erstellen
@@ -129,6 +120,29 @@ Typ: Linux x64\
 RAM: 2048 MB\
 Festplatte: 10 GB\
 Festplatten Typ: VMDK → dynamisch alloziert
+
+### 02.3 VM Konfigurieren
+Updaten und Upgraden
+```Shell 
+$ apt update
+$ apt upgrade -y
+```
+Synaptic Installieren
+```Shell 
+$ apt install synaptic
+```
+
+## 03 - Vagrant
+### 03.1 - Installation
+<b>Linux</b>
+
+```Shell 
+apt install vagrant
+```
+
+<b>Windows</b>\
+Auf folgenden Link drücken, Downloaden und dem Wizzard folgen:\
+d
 
 
 # 20-Infrastruktur
