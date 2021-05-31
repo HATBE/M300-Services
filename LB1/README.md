@@ -247,7 +247,7 @@ $ git pull origin master
 ```
 
 # 5 - Projekt
-# 5.1 - Projekt Umfang
+## 5.1 - Projekt Umfang
 
 - vagrant
 
@@ -260,6 +260,18 @@ Backend
 
 Frontend
 - apache Webserver mit Nextclud gui
+
+## 5.2 Umgebung vorbereiten
+```Shell 
+$ mkdir ~/M300/LB1/Project/
+$ cd ~/M300/LB1/Project/
+$ vargrant box add debian/buster64
+$ vagrant init debian/buster64
+$ nano Vagrantfile
+
+```
+
+
 # 1000 - Quellen
 
 Aufgaben und einige Texte: https://github.com/mc-b/M300/tree/master
