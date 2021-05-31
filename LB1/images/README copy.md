@@ -148,16 +148,7 @@ Um VScode für Mardown und GIT ready zu machen, habe ich folgende Addons install
   
 # 4 - GIT
 ## 4.1 - Github Account
-Um sich einen Github Account anzulegen, muss auf die Internetseite "github.com" navigiert werden.\
-Hier kann dann oben rechts auf "Sign up" gedrückt werden.
 
-![img](images/KvYvv17.png)
-
-Jetzt müssen die Account Daten eingegeben werden.
-
-![img](images/zkUnDB6.png)
-
-Nun ist der Account erstellt.
 ## 4.2 - Installation
 Um Git zu Installieren, muss folgendes getan werden.
 ```Shell 
@@ -174,13 +165,13 @@ $ git config --global user.name "git_username" # Usernamen Setzen
 $ git config --global user.email "e@mail.adresse" # E-Mail setzen
 ```
 ```Shell 
-$ git clone <repository> # Repository Herunterladen / Klonen
+$ git clone <REPOSITORY> # Repository Herunterladen / Klonen
 ```
 ```Shell 
 $ git status # Status des aktuellen git Repository anzeigen.
 ```
 ```Shell 
-$ git remote add <repository> <remote> # fügt einen Remote Git Server hinzu (beispiel: Github)
+$ git remote add <name> <remote> # fügt einen Remote Git Server hinzu (beispiel: Github)
 ```
 ```Shell 
 $ git pull <remote> <branch> # dateien von Remote Server pullen
@@ -196,7 +187,7 @@ $ git push <remote> <branch> # dateien auf Remote Server pushen
 ```
 
 ## 4.4 - SSH Key
-Zuerst muss in der Konsole einen SSH Key erstellt werden.
+Zuerst muss in der Konsole einen SSH Key erstellt werden
 
 ```Shell 
 $ ssh-keygen -t rsa -b 4096 # erstellt einen 4096 bytes langen RSA (SSH) key
@@ -208,14 +199,14 @@ Enter same passphrase again: [Passwort wiederholen]
 ```
 
 Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.\
-![img](images/y2RjRN1.png)
-Wenn der Public key nun in der Konsole angezeigt wird,muss dieser Kopiert werden.\
-![img](images/yMGMdSe.png)
+<img src="images/y2RjRN1.png">\
+Wenn der Public key nun in der Konsole angezeigt wird, diesen Kopieren.\
+<img src="images/yMGMdSe.png">
 
-![img](images/92RsF4D.png)
-Den zuvor kopierten Public Key hier unter "KEY" Pasten.\
+<img src="images/92RsF4D.png">\
+Den zuvor kopierten Public Key hier unter KEY Pasten.\
 Der Name kann frei gewählt werden.\
-![img](images/Rzy4krY.png)
+<img src="images/Rzy4krY.png">
 
 Wenn der Key nun in Github eingetragen ist, muss er auf dem Lokalen PC noch mit dem Repository verbunden werden.
 
@@ -223,55 +214,20 @@ Wenn der Key nun in Github eingetragen ist, muss er auf dem Lokalen PC noch mit 
 $ ssh git@github.com -T -i ~/.ssh/<dein KEY>
 Hi User! Youve successfully authenticated, but GitHub does not provide shell access.
 Connection to github.com closed.
-```
-Um schonmal in die Zukunft zu denken und mehrere SSH keys zu verbinden, kann ein eintrag in der SSH Config gemacht werden.\
-Diese befindet sich unter folgendem pfad.
-```Shell 
-nano ~/.ssh/config
-```
-Jetzt kann einfach folgender eintrag hinzugefügt werden
-```Shell 
-Host github
-    Hostname github.com
-    User git
-    IdentityFile ~/.ssh/keyfile
-    IdentitiesOnly yes
-```
-Um nun das Git Repository lokal zu Spiegeln, muss folgendes gemacht werden.
-```Shell
-$ cd /pfad/zu/repository/
+
+$ cd /pfad/zu/repository
 $ git init
 $ git remote add origin https://github.com/<dein Username>/<dein GIT Repository>
-$ git remote set-url github:<dein Username>/<dein GIT Repository>
+$ git remote set-url git@github.com:<dein Username>/<dein GIT Repository>
 $ git pull origin master
 ```
-
-# 5 - Projekt
-# 5.1 - Projekt Umfang
-
-- vagrant
-
-Konzept: 
-Backend
-- DB Server
-- File Server
-- NGINX/apache Reverse Proxy
-  - config file in shared folder (einfach kopieren)
-
-Frontend
-- apache Webserver mit Nextclud gui
 # 1000 - Quellen
 
-Aufgaben und einige Texte: https://github.com/mc-b/M300/tree/master
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/ch/">
-<img alt="Creative Commons Lizenzvertrag" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/3.0/ch/88x31.png" />
-</a><br />Dieses Werk ist lizenziert unter einer <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/ch/">Creative Commons Namensnennung - Nicht-kommerziell - Weitergabe unter gleichen Bedingungen 3.0 Schweiz Lizenz</a>
 
 
 
 
-<br><br><br><br><br><br>
+
 
 
 
@@ -287,9 +243,10 @@ Aufgaben und einige Texte: https://github.com/mc-b/M300/tree/master
 Text
 
 ## Umsetzung
-
+Text
 
 ## Testing
 Text
 
 ## Quellen
+Text
