@@ -316,7 +316,7 @@ umd nur eine der beiden zu starten: vagrant up box1 oder box2
 Nun laufen die beiden VMs und sie können auch miteinander kommunizieren.\
 <img src="images/IAxxDO5.png">
 
-Um eine der beiden VMs zu kontrollieren
+Um eine der beiden VMs zu **kontrollieren**
 ```Shell 
 $ vagrant ssh box1
 oder
@@ -324,6 +324,16 @@ $ vagrant ssh box2
 ```
 
 <img src="images/5Nii12Y.png">
+
+<b>Automatisch bash befehle beim erstellen ausführen</b>
+
+Folgender Punkt muss auskommentiert weden, und die Befehle können dazwischen geschrieben werden, in desem Beispiel werde ich einen Apache Server installieren und das System updaten
+```Shell
+config.vm.provision "shell", inline: <<-SHELL
+   apt-get update
+   apt-get install -y apache2
+SHELL
+```
 
 ### 10.03.3 - Webserver
 
