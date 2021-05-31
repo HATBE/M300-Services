@@ -1,3 +1,8 @@
+1. [Einleitung](#Einleitung)
+2. [Virtualbox](#Virtualbox)
+3. [vagrant](#vagrant)
+4. [Vscode](#3_-_Visual_Studio_Code)
+
 # Einleitung
 Einleitung zum LB1 Projekt (Erklärungen)
 
@@ -57,7 +62,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 Die vagrant VMs werden standartmässig in Virtualbox laufen gelassen, solange man dies im Vagrantfile nicht ändert.\
-<img src="images/Gh5bjp2.png">
+![img](images/Gh5bjp2.png)
 
 Nach dem Editieren des vagrantfiles, muss folgender befehl ausgeführt werden
 ```Shell 
@@ -122,7 +127,7 @@ $ vagrant up
 umd nur eine der beiden zu starten: vagrant up box1 oder box2
 ```
 Nun laufen die beiden VMs und sie können auch miteinander kommunizieren.\
-<img src="images/IAxxDO5.png">
+![img](images/IAxxDO5.png)
 
 Um eine der beiden VMs zu **kontrollieren**
 ```Shell 
@@ -131,7 +136,20 @@ oder
 $ vagrant ssh box2
 ```
 
-<img src="images/5Nii12Y.png">
+![img](images/5Nii12Y.png)
+# 3 - Visual Studio Code
+## 3.1 - Installation
+Um VScode zu Installieren, muss folgendes getan werden.
+```Shell 
+snap install --classic code
+```
+## 3.2 - Konfiguration
+### 3.2.1 - Addons
+Um VScode für Mardown und GIT ready zu machen, habe ich folgende Addons installiert.
+- GitLens (Mit Gitlens kann in einem File angezeigt werden wann was von wem und in welchem commit geändert oder hinzugefügt wurde.)\
+![img](images/uEKAgPI.png)
+- Markdown All in One (Markdown All in One fügt einige kleine shortcuts und optische verschönerungen zum vagrantfile hinzu).
+- Code Spell checker German und English (Code Spell checker ist ein Gramatik und rechtschreib überprüfung für vscode)
 # 1000 - Quellen
 
 
