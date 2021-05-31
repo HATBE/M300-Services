@@ -337,6 +337,27 @@ SHELL
 
 ### 10.03.3 - Webserver
 
+Um mit Vagrant einen Webserver zu installieren, kann das Vagrantfile folgendermassen konfiguriert werden
+
+```Shell 
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/xenial64" # Install Ubuntu (Xenial = 16.04)
+  config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true # Port 80 von VM zu port 8080 Host weiterleiten
+  config.vm.synced_folder ".", "/var/www/html"   # den Pfad in dem das Vagrant file ist, zum webverzeichnis weiterleiten
+config.vm.provider "virtualbox" do |vb|
+  vb.memory = "512"  # Server mit einem Halben gb ram ausstatten
+end
+config.vm.provision "shell", inline: <<-SHELL
+  # Packages vom lokalen Server holen
+  # sudo sed -i -e"1i deb {{config.server}}/apt-mirror/mirror/archive.ubuntu.com/ubuntu xenial main restricted" /etc/apt/sources.list 
+  sudo apt-get update # System Updaten
+  sudo apt-get -y install apache2  # apache2 Installieren
+SHELL
+end
+```
+
+Dieses vagrantfile ist bereits im Git Repo von MC-B vorhanden\
+https://github.com/tbz-it/M300/tree/master/vagrant/web
 ```Shell 
 cd ~/gitrep/M300/vagrant/web
 vagrant up
