@@ -258,6 +258,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 Die vagrant VMs werden standartmässig in Virtualbox laufen gelassen, solange man dies im Vagrantfile nicht ändert.
+
 <img src="images/Gh5bjp2.png">
 
 Nach dem Editieren des vagrantfiles, muss folgender befehl ausgeführt werden
@@ -356,7 +357,7 @@ SHELL
 end
 ```
 
-Dieses vagrantfile ist bereits im Git Repo von MC-B vorhanden\
+Dieses vagrantfile ist bereits im Git Repo von MC-B vorhanden.\
 https://github.com/tbz-it/M300/tree/master/vagrant/web
 ```Shell 
 cd ~/gitrep/M300/vagrant/web
