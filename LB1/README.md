@@ -209,7 +209,9 @@ Enter same passphrase again: [Passwort wiederholen]
 
 Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.\
 ![img](images/y2RjRN1.png)
+  
 Wenn der Public key nun in der Konsole angezeigt wird,muss dieser Kopiert werden.\
+  
 ![img](images/yMGMdSe.png)
 
 ![img](images/92RsF4D.png)
