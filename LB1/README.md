@@ -244,7 +244,7 @@ Um nun das Git Repository lokal zu Spiegeln, muss folgendes gemacht werden.
 $ cd /pfad/zu/repository/
 $ git init
 $ git remote add origin https://github.com/<dein Username>/<dein GIT Repository>
-$ git remote set-url github:<dein Username>/<dein GIT Repository>
+$ git remote set-url github:<dein Username>/<dein GIT Repository> # github darf nur geschrieben werden, wenn der ssh config Eintrag gemacht wurde, sonnst git@github.com.
 $ git pull origin master
 ```
 
