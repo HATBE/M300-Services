@@ -86,12 +86,12 @@ end
 Um einen Port auf den Host weiter zu leiten, kann folgenes getan werden.\
 In diesem Beispiel wird der Guest Port 80 auf den Host port 8080 umgeleitet.
 ```Shell 
-box1.vm.network "forwarded_port", guest:80, host:8080
+config..vm.network "forwarded_port", guest:80, host:8080
 ```
 Um ein Host folder dem Guest zur verfügung zu stellen, kann folgendes in die Konfiguration geschrieben werden.\
 Hier wird nun der ordner data, der im vagrant ordner drinn ist, auf /home/vagrant/data gemapt.
 ```Shell 
-box3.vm.synced_folder "./data", "/home/vagrant/data"
+config.vm.synced_folder "./data", "/home/vagrant/data"
 ```
 Um bei der Installation einer VM automatisch Befehle ausführen zu lassen, muss folgender Bereich auskommentert oder erstellt werden.\
 Die einzelnen bash Befehle, können dann dazwischen geschrieben werden.
