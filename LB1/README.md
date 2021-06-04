@@ -84,7 +84,7 @@ config.vm.provider "virtualbox" do |vb|
 end
 ```
 Um einen Port auf den Host weiter zu leiten, kann folgenes getan werden.\
-In diesem Beispiel wird der Port Guest 80 auf den Host port 8080 umgeleitet.
+In diesem Beispiel wird der Guest Port 80 auf den Host port 8080 umgeleitet.
 ```Shell 
 box1.vm.network "forwarded_port", guest:80, host:8080
 ```
