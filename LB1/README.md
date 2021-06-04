@@ -86,7 +86,7 @@ end
 Um einen Port auf den Host weiter zu leiten, kann folgenes getan werden.\
 In diesem Beispiel wird der Guest Port 80 auf den Host port 8080 umgeleitet.
 ```Shell 
-config..vm.network "forwarded_port", guest:80, host:8080
+config.vm.network "forwarded_port", guest:80, host:8080
 ```
 Um ein Host folder dem Guest zur verfügung zu stellen, kann folgendes in die Konfiguration geschrieben werden.\
 Hier wird nun der ordner data, der im vagrant ordner drinn ist, auf /home/vagrant/data gemapt.
