@@ -104,7 +104,7 @@ SHELL
 
 Um ganze Scripts auszuführen, kann folgender Befehl genutzt werden.
 ```Shell
-box1.vm.provision "shell", path: "script.sh"
+config.vm.provision "shell", path: "script.sh"
 ```
 ### 2.5 - Mehrere Vms erstellen
 Um mit einem Vagrantfile mehrere Vms zu erstellen, muss folgenes unternommen werden.
