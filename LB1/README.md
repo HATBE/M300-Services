@@ -75,13 +75,36 @@ Um der VM eine IP Adresse zu geben,  muss das vagrantfile folgendermassen editie
 config.vm.network "private_network", ip: "10.9.8.7"
 ```
 
-Um bei der Installation einer VM automatisch Befehle ausführen zu lassen, muss folgender Bereich auskommentert werden.\
+Um dinge wie Z. b. Ram oder Cpu einstellen zu können, muss dies in folgendem Block getan werden.
+```Shell 
+config.vm.provider "virtualbox" do |vb|
+  vb.name = "VM-NAME"
+  vb.memory = 2048
+  vb.cpus = 2
+end
+```
+Um einen Port auf den Host weiter zu leiten, kann folgenes getan werden.\
+In diesem Beispiel wird der Port Guest 80 auf den Host port 8080 umgeleitet.
+```Shell 
+box1.vm.network "forwarded_port", guest:80, host:8080
+```
+Um ein Host folder dem Guest zur verfügung zu stellen, kann folgendes in die Konfiguration geschrieben werden.\
+Hier wird nun der ordner data, der im vagrant ordner drinn ist, auf /home/vagrant/data gemapt.
+```Shell 
+box3.vm.synced_folder "./data", "/home/vagrant/data"
+```
+Um bei der Installation einer VM automatisch Befehle ausführen zu lassen, muss folgender Bereich auskommentert oder erstellt werden.\
 Die einzelnen bash Befehle, können dann dazwischen geschrieben werden.
 ```Shell
 config.vm.provision "shell", inline: <<-SHELL
    apt-get update
    apt-get install -y apache2
 SHELL
+```
+
+Um ganze Scripts auszuführen, kann folgender Befehl genutzt werden.
+```Shell
+box1.vm.provision "shell", path: "script.sh"
 ```
 ### 2.5 - Mehrere Vms erstellen
 Um mit einem Vagrantfile mehrere Vms zu erstellen, muss folgenes unternommen werden.
@@ -119,7 +142,7 @@ end
 Um die VMs zu starten
 ```Shell 
 $ vagrant up
-umd nur eine der beiden zu starten: vagrant up box1 oder box2
+um nur eine der beiden zu starten: vagrant up box1 oder box2
 ```
 Nun laufen die beiden VMs und sie können auch miteinander kommunizieren.\
 ![img](images/IAxxDO5.png)
