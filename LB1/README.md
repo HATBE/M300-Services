@@ -209,7 +209,9 @@ Enter same passphrase again: [Passwort wiederholen]
 
 Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.\
 ![img](images/y2RjRN1.png)
+  
 Wenn der Public key nun in der Konsole angezeigt wird,muss dieser Kopiert werden.\
+  
 ![img](images/yMGMdSe.png)
 
 ![img](images/92RsF4D.png)
@@ -242,7 +244,7 @@ Um nun das Git Repository lokal zu Spiegeln, muss folgendes gemacht werden.
 $ cd /pfad/zu/repository/
 $ git init
 $ git remote add origin https://github.com/<dein Username>/<dein GIT Repository>
-$ git remote set-url github:<dein Username>/<dein GIT Repository>
+$ git remote set-url github:<dein Username>/<dein GIT Repository> # github darf nur geschrieben werden, wenn der ssh config Eintrag gemacht wurde, sonnst git@github.com.
 $ git pull origin master
 ```
 
