@@ -254,12 +254,13 @@ $ git pull origin master
 Konzept: 
 Backend
 - DB Server
-- File Server
+- File/Data Server
 - NGINX/apache Reverse Proxy
   - config file in shared folder (einfach kopieren)
+- LDAP Server?
 
 Frontend
-- apache Webserver mit Nextclud gui
+- apache2 Webserver mit Nextclud gui
 
 ## 5.2 Umgebung vorbereiten
 ```Shell 
