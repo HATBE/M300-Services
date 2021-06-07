@@ -1,5 +1,11 @@
 MYSQL_ROOT_PW="Password123"
 
+MYSQL_NEXTCLOUD_PW="Password123"
+MYSQL_NEXTCLOUD_USER="ncuser"
+
+NODES=( node1 node2 )
+
+
 apt update -y
 apt upgrade -y
 
@@ -14,3 +20,12 @@ mysql -e "UPDATE mysql.user SET Password = PASSWORD('${MYSQL_ROOT_PW}') WHERE Us
 mysql -e "DROP USER IF EXISTS ''@'localhost';" # Remove the Anonymous User
 mysql -e "DROP USER IF EXISTS ''@'$(hostname)';"
 mysql -e "DROP DATABASE IF EXISTS test;" # Remove the Demo database
+
+for NODE in "${NODES[@]}"; do
+    # Nextcloud DB
+    mysql -e "CREATE DATABASE ${NODE};"
+    mysql -e "CREATE USER '${MYSQL_NEXTCLOUD_USER}'@'%' IDENTIFIED BY '${MYSQL_NEXTCLOUD_PW}';"
+    mysql -e "GRANT ALL PRIVILEGES ON ${NODE}.* to '${MYSQL_NEXTCLOUD_USER}'@'%';"
+
+    mysql -e "FLUSH PRIVILEGES;"
+done
