@@ -1,11 +1,16 @@
+#!/bin/bash
+
+# (c) Aaron Gensetter, 2021 
+
+## Define vars
 MYSQL_ROOT_PW="Password123"
 
 MYSQL_NEXTCLOUD_PW="Password123"
 MYSQL_NEXTCLOUD_USER="ncuser"
 
-NODES=( node1 node2 )
+NODES=( node1 node2 ) # Temp
 
-
+## Installation
 apt update -y
 apt upgrade -y
 
@@ -21,11 +26,13 @@ mysql -e "DROP USER IF EXISTS ''@'localhost';" # Remove the Anonymous User
 mysql -e "DROP USER IF EXISTS ''@'$(hostname)';"
 mysql -e "DROP DATABASE IF EXISTS test;" # Remove the Demo database
 
+# Initial Nextcloud Databases
+mysql -e "CREATE USER '${MYSQL_NEXTCLOUD_USER}'@'%' IDENTIFIED BY '${MYSQL_NEXTCLOUD_PW}';"
 for NODE in "${NODES[@]}"; do
-    # Nextcloud DB
-    mysql -e "CREATE DATABASE ${NODE};"
-    mysql -e "CREATE USER '${MYSQL_NEXTCLOUD_USER}'@'%' IDENTIFIED BY '${MYSQL_NEXTCLOUD_PW}';"
-    mysql -e "GRANT ALL PRIVILEGES ON ${NODE}.* to '${MYSQL_NEXTCLOUD_USER}'@'%';"
+    echo "create node ${NODE}"
 
-    mysql -e "FLUSH PRIVILEGES;"
+    mysql -e "CREATE DATABASE ${NODE};"
+    mysql -e "GRANT ALL PRIVILEGES ON ${NODE}.* to '${MYSQL_NEXTCLOUD_USER}'@'%';"
 done
+
+mysql -e "FLUSH PRIVILEGES;"

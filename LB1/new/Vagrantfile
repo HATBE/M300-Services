@@ -1,5 +1,6 @@
-nodes_config = (JSON.parse(File.read("nodes.json")))['nodes'] # Select nodess
+# (c) Aaron Gensetter 2021, 
 
+nodes_config = (JSON.parse(File.read("nodes.json")))['nodes'] # Select nodess
 
 Vagrant.configure(2) do |config|
 

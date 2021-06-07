@@ -12,7 +12,7 @@
             "args":""
         },
         "node1":{
-            "description":"Nextcloud frontend",
+            "description":"Nextcloud Frontend",
             "ip":"10.9.8.12",
             "ports":[
                 {
@@ -30,7 +30,7 @@
             "args":"node1"
         },
         "node2":{
-            "description":"Nextcloud frontend",
+            "description":"Nextcloud Frontend",
             "ip":"10.9.8.13",
             "ports":[
                 {
