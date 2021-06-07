@@ -8,7 +8,7 @@
             ],
             "memory":3072,
             "cpu":2,
-            "script":"dbinstall.sh",
+            "script":"scripts/dbinstall.sh",
             "args":""
         },
         "node1":{
@@ -26,7 +26,7 @@
             ],
             "memory":1024,
             "cpu":2,
-            "script":"ncinstall.sh",
+            "script":"scripts/ncinstall.sh",
             "args":"node1"
         },
         "node2":{
@@ -44,7 +44,7 @@
             ],
             "memory":1024,
             "cpu":2,
-            "script":"ncinstall.sh",
+            "script":"scripts/ncinstall.sh",
             "args":"node2"
         }
     }

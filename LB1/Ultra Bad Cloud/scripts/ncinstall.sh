@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # (c) Aaron Gensetter, 2021
+# Part from "Ultra Bad Cloud (UBC)"
 
 ## Check if some args are given
 if [[ $# -eq 0 ]]
@@ -44,5 +45,7 @@ chown www-data:www-data /var/www/html/ -R
 
 su -l www-data -s /bin/bash -c "php /var/www/html/occ maintenance:install --database 'mysql' --database-host '${MYSQL_HOST}' --database-name '${1}' --database-user '${MYSQL_USER}' --database-pass '${MYSQL_PW}' --admin-user '${NEXTCLOUD_ADMIN_USER}' --admin-pass '${NEXTCLOUD_ADMIN_PW}'" # Configure/Install Nextcloud
 
+
+echo "su -l www-data -s /bin/bash -c php /var/www/html/occ maintenance:install --database 'mysql' --database-host '${MYSQL_HOST}' --database-name '${1}' --database-user '${MYSQL_USER}' --database-pass '${MYSQL_PW}' --admin-user '${NEXTCLOUD_ADMIN_USER}' --admin-pass '${NEXTCLOUD_ADMIN_PW}'" # Configure/Install Nextcloud
+
 # TODO: --data-dir
-echo "1 = ${1}"

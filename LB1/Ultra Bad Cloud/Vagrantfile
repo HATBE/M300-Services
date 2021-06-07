@@ -1,4 +1,5 @@
-# (c) Aaron Gensetter 2021, 
+# (c) Aaron Gensetter, 2021
+# Part from "Ultra Bad Cloud (UBC)"
 
 nodes_config = (JSON.parse(File.read("nodes.json")))['nodes'] # Select nodess
 

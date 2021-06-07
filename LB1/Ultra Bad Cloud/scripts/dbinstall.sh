@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# (c) Aaron Gensetter, 2021 
+# (c) Aaron Gensetter, 2021
+# Part from "Ultra Bad Cloud (UBC)"
 
 ## Define vars
 MYSQL_ROOT_PW="Password123"
