@@ -164,10 +164,10 @@ snap install --classic code
 ## 3.2 - Konfiguration
 ### 3.2.1 - Addons
 Um VScode für Mardown und GIT ready zu machen, habe ich folgende Addons installiert.
-- GitLens (Mit Gitlens kann in einem File angezeigt werden wann was von wem und in welchem commit geändert oder hinzugefügt wurde.)\
+- __GitLens__ (Mit Gitlens kann in einem File angezeigt werden wann was von wem und in welchem commit geändert oder hinzugefügt wurde.)\
 ![img](images/uEKAgPI.png)
-- Markdown All in One (Markdown All in One fügt einige kleine shortcuts und optische verschönerungen zum vagrantfile hinzu).
-- Code Spell checker German und English (Code Spell checker ist ein Gramatik und rechtschreib überprüfung für vscode)
+- __Markdown All in One__ (Markdown All in One fügt einige kleine shortcuts und optische verschönerungen zum vagrantfile hinzu).
+- __Code Spell checker__ German und English (Code Spell checker ist ein Gramatik und rechtschreib überprüfung für vscode)
   
 # 4 - GIT
 ## 4.1 - Github Account
@@ -233,7 +233,7 @@ Enter same passphrase again: [Passwort wiederholen]
 Nachdem der Key erstellt wurde, muss er im Terminal angezeigt werden, dies muss mit folgendem Befehl getan werden.\
 ![img](images/y2RjRN1.png)
   
-Wenn der Public key nun in der Konsole angezeigt wird,muss dieser Kopiert werden.\
+Wenn der Public key nun in der Konsole angezeigt wird, muss dieser Kopiert werden.\
   
 ![img](images/yMGMdSe.png)
 
