@@ -155,6 +155,62 @@ $ vagrant ssh box2
 ```
 
 ![img](images/5Nii12Y.png)
+
+### 2.6 - Json
+Das Vagrantfile kann Json dateien einlesen, und somit viel dynamischer konfiguriert werden.
+
+Hier ein Kleines Beispiel.
+```Shell 
+FilePath: /path/to/vmstorage/json/Vagrantfile
+
+-------------------------------------------------
+
+nodes_config = (JSON.parse(File.read("nodes.json")))['nodes']
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "ubuntu/focal64"
+
+  nodes_config.each do |node| 
+    node_name = node[0]
+    node_values = node[1]
+    config.vm.define node_name do |config|
+      config.vm.hostname = node_name
+      config.vm.network :private_network, ip: node_values['ip']
+      config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", node_values['memory']] 
+        vb.customize ["modifyvm", :id, "--name", node_name]
+        vb.cpus = node_values['cpu']
+      end
+      config.vm.provision :shell, :path => node_values['script']
+    end
+  end
+end
+```
+Das JSON file könnte folgendermassen aussehen.
+```Json
+FilePath: /path/to/vmstorage/json/nodes.json
+
+-------------------------------------------------
+
+{
+  "nodes":{
+    "node1":{
+      "ip":"10.9.8.11",
+      "memory":3072,
+      "cpu":2
+      "script":"db.sh",
+    },
+    "node2":{
+      "ip":"10.9.8.13",
+      "memory":1024,
+      "cpu":2
+      "script":"nc.sh",
+    }
+  }
+}
+
+```
 # 3 - Visual Studio Code
 ## 3.1 - Installation
 Um VScode zu Installieren, muss folgendes getan werden.
