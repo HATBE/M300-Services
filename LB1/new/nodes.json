@@ -1,0 +1,33 @@
+{
+    "nodes":{
+        "node1":{
+            "description":"Database Server",
+            "ip":"10.9.8.11",
+            "ports":[
+
+            ],
+            "memory":3072,
+            "cpu":2,
+            "script":"dbinstall.sh",
+            "args":""
+        },
+        "node2":{
+            "description":"Nextcloud frontend",
+            "ip":"10.9.8.13",
+            "ports":[
+                {
+                    "guest":80,
+                    "host":8080
+                },
+                {
+                    "guest":443,
+                    "host":8443
+                }
+            ],
+            "memory":1024,
+            "cpu":2,
+            "script":"ncinstall.sh",
+            "args":"node2"
+        }
+    }
+}

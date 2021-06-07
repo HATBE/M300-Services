@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 1
     end
     box2.vm.hostname = "box2"
-    box2.vm.network "private_network", ip: "10.9.8.13"
+    box2.vm.network "private_network", ip: "10.9.8.12"
     box2.vm.provision "shell", path: "box2/script.sh" # install script
   end # end box 2
 

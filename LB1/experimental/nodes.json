@@ -24,6 +24,15 @@
           "memory":1024,
           "script":"nc.sh",
           "cpu":2
+       },
+       "node3":{
+          "ip":"10.9.8.13",
+          "ports":[
+          
+          ],
+          "memory":1024,
+          "script":"test.sh",
+          "cpu":2
        }
     }
  }
