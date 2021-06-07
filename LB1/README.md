@@ -198,13 +198,13 @@ FilePath: /path/to/vmstorage/json/nodes.json
     "node1":{
       "ip":"10.9.8.11",
       "memory":3072,
-      "cpu":2
+      "cpu":2,
       "script":"db.sh",
     },
     "node2":{
       "ip":"10.9.8.13",
       "memory":1024,
-      "cpu":2
+      "cpu":2,
       "script":"nc.sh",
     }
   }
