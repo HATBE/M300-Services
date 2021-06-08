@@ -4,11 +4,11 @@
 # Part from "Ultra Bad Cloud (UBC)"
 
 # TODO;
-   Init (check if no vagrant isset, else destroy and build new (ask user)
-   Start (all/node)
-   Stop (all node)
-   Desttoy (all/node) if node, destroy db!)
-   Deploy (take all nodes, cut node save number create new nodes in empty spaces (1,2,4,5) -> 3
+   # Init (check if no vagrant isset, else destroy and build new (ask user)
+   # Start (all/node)
+   # Stop (all node)
+   # Desttoy (all/node) if node, destroy db!)
+   # Deploy (take all nodes, cut node save number create new nodes in empty spaces (1,2,4,5) -> 3
 
 if [[ $UID -eq 0 ]]
 then
