@@ -29,6 +29,7 @@ mysql -e "DROP DATABASE IF EXISTS test;" # Remove the Demo database
 
 # Initial Nextcloud Databases
 mysql -e "CREATE USER '${MYSQL_NEXTCLOUD_USER}'@'%' IDENTIFIED BY '${MYSQL_NEXTCLOUD_PW}';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* to '${MYSQL_NEXTCLOUD_USER}'@'%';"
 for NODE in "${NODES[@]}"; do
     echo "create node ${NODE}"
 

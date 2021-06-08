@@ -20,6 +20,7 @@ JSONFILE="nodes.json"
 
 # Check Node
 checkNodeStatus () {
+    #fin
     # check if node is running
     ARG="$1"
     TEST=$(vagrant status ${ARG})
@@ -43,7 +44,7 @@ checkNodeStatus () {
 
 # Stop Node
 stopNode () {
-
+    #fin
     NODE=$1
     checkNodeStatus $NODE
     if [[ $? -ne 0 && $? -ne 2 && $? -ne 3 ]]
@@ -60,7 +61,7 @@ stopNode () {
 
 # Start Node
 startNode () {
-    
+    #fin
     NODE=$1
     checkNodeStatus $NODE
     if [[ $? -eq 1 ]]
@@ -76,23 +77,78 @@ startNode () {
 
 # Deploy Nextcloud
 deployNode () {
-
+    #exit 1 # remove after finish
     # TODO: connect to db server, create db
     # add node to json
     # vagrant reload
 
+    RANGE=({1..100})
+    IP_PREFIX="10.9.8."
+    PORT_PREFIX="80"
+
+    NODES=($(jq '.nodes | keys | .[]' nodes.json))
+    NODES=("${NODES[@]:1}")
+    NODEARRAY=()
+    for string in ${NODES[@]}
+    do
+        OUTPUT=${string:5:1} # Cut node away and leve number
+        NODEARRAY+=("${OUTPUT}")
+    done
+    NUM=1
+    EXITER=0
+    while [[ NUM -eq 1 ]]
+    do
+        if [[ $EXITER -eq 0 ]]
+        then
+            NUMBER=$(shuf -i 1-100 -n 1)
+            for NODE in ${NODEARRAY[@]}
+            do
+                EXITER=0
+                if [[ $NUMBER -eq $NODE ]]
+                then
+                    break
+                else 
+                    EXITER=1
+                fi
+            done
+        else
+            NUM=0
+        fi
+    done
+
+    DESCRIPTION="nextcloud server"
+    IP="${IP_PREFIX}${NUMBER}"
+    PORT="${PORT_PREFIX}${NUMBER}"
+    NODE="node${NUMBER}"
+    MEMORY="1024"
+    CPU="1"
+    SCRIPT="scripts/ncinstall.sh"
+    ARGS="${NODE}"
+
+    echo $PORT
+    echo $IP
+    echo $NODE
+
     echo "Deploying..."
-    checkNodeStatus dbs
-    STATUS=$?
-    if [[ STATUS -eq 1 ]]
-    then
-        echo ""
-    else
-        echo "DB Server is Offline"
-    fi
+
+    #checkNodeStatus dbs
+    #STATUS=$?
+    #if [[ STATUS -eq 1 ]]
+    #then
+    #    mysql -h 10.9.8.11 -u ncuser -pPassword123 -e "CREATE DATABASE ${NODE};"
+    #    mysql -h 10.9.8.11 -u ncuser -pPassword123 -e "FLUSH PRIVILEGES";
+
+        # Create vm usw. usw # add node to json
+
+    #    vagrant reload
+    #    vagrant up $NODE
+    #else
+    #    echo "DB Server is Offline"
+    #fi
+
+    
     # mysql
     # json add 
-    # vagrant reload
 }
 
 # Remove Nextcloud node
@@ -149,6 +205,7 @@ if [[ "${1}" ==  "init" ]]
 then
     # Only start init things
     echo "Create Init vagrant..."
+    vagrant destroy -f
     checkNodeStatus dbs
     STATUS=$?
     if [[ $STATUS -eq 3 ]]
