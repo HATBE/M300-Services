@@ -16,6 +16,8 @@ then
     exit 1
 fi
 
+JSONFILE="nodes.json"
+
 # Check Node
 checkNodeStatus () {
     # check if node is running
@@ -76,18 +78,21 @@ startNode () {
 deployNode () {
 
     # TODO: connect to db server, create db
-        # add node to json
-        # vagrant reload
-    NODE=$1
-    echo $NODE
-    checkNodeStatus $NODE
-    if [[ $? -ne 1 || $? -ne 2 || $? -ne 3 ]]
+    # add node to json
+    # vagrant reload
+
+    echo "Deploying..."
+    checkNodeStatus dbs
+    STATUS=$?
+    if [[ STATUS -eq 1 ]]
     then
-        echo $?
-        echo "Deploying"
+        echo ""
     else
-        echo "${NODE} is already deployed"
+        echo "DB Server is Offline"
     fi
+    # mysql
+    # json add 
+    # vagrant reload
 }
 
 # Remove Nextcloud node
@@ -99,12 +104,22 @@ destroyNode () {
         # connect to db server, delete db
     NODE=$1
     checkNodeStatus $NODE
-    if [[ $? -eq 3 ]] # CHANGE!!
+    STATUS=$?
+    if [[ $STATUS -eq 1 || $STATUS -eq 2 || $STATUS -eq 3 ]]
     then
-        echo "destoy..."
+        echo "destroy..."
+        vagrant destroy $NODE
     else
-        echo "${NODE} is already deployed"
+        echo "${NODE} is not online."
     fi
+}
+
+jsonHelper() {
+    FILTER=$1
+
+    RES=$(jq -r "${FILTER}" ${JSONFILE})
+    # deljson -> echo $(jq 'del(${FILTER})' $JSONFILE) > $JSONFILE
+    echo $RES
 }
 
 ####################################################################
@@ -129,12 +144,17 @@ then
     exit 1
 fi
 
-# Install -----------------------------------------------------------------------------
+# Init -----------------------------------------------------------------------------
 if [[ "${1}" ==  "init" ]]
 then
     # Only start init things
     echo "Create Init vagrant..."
-    vagrant up dbs
+    checkNodeStatus dbs
+    STATUS=$?
+    if [[ $STATUS -eq 3 ]]
+    then
+        vagrant up dbs
+    fi
 # Start -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "start" ]]
 then
@@ -145,9 +165,6 @@ then
     else
         echo "Not enough arguments. ${USAGE}"
     fi
-    
-    # TODO: check if node exists (json file)
-        # vagrant up node
 # Stop -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "stop" ]]
 then
@@ -158,8 +175,6 @@ then
     else
         echo "Not enough arguments. ${USAGE}"
     fi
-    # TODO: check if node exists (json file)
-        # vagrant halt node
 # Deploy -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "deploy" ]]
 then
@@ -182,6 +197,7 @@ then
     fi
 # Else -----------------------------------------------------------------------------
 else
+    jsonHelper ".nodes.dbs1"
     echo "Wrong arguments. ${USAGE}"
     exit 1
 fi
