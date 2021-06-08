@@ -8,7 +8,7 @@
    # Start (all/node)
    # Stop (all node)
    # Desttoy (all/node) if node, destroy db!)
-   # Deploy (take all nodes, cut node save number create new nodes in empty spaces (1,2,4,5) -> 3
+   # Deploy (take all nodes, cut node save number create new nodes in empty spaces (1,2,4,5) -> 3, create functiln, make deploy loop for more ghan one deploy at a time, print all data, login, port, usw to file .csv
 
 if [[ $UID -eq 0 ]]
 then
