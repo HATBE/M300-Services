@@ -5,12 +5,20 @@
 
 # Define Variables
 JSONFILE="nodes.json"
+DBS_IP="10.9.8.101"
+DBS_USER="root"
+DBS_PW="Password123"
+
+# Define Shell colors
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 YELLOW=`tput setaf 3`
 BLUE=`tput setaf 6`
 RESET=`tput sgr0`
+
 USAGE="${YELLOW}Usage: ${0} <install:deploy:destroy:start:stop>${RESET}"
+FRESHJSON="{\"nodes\":{\"dbs\":{\"description\":\"Database Server\",\"ip\":\"${DBS_IP}\",\"ports\":[{\"guest\":3306,\"host\":3306}],\"memory\":3072,\"cpu\":2,\"script\":\"scripts/dbinstall.sh\",\"args\":\"\"}}}"
+
 
 # check if user is Root user
 if [[ $UID -eq 0 ]]; then
@@ -23,7 +31,7 @@ fi
 ####################################################################
 # Check Node
 checkNodeStatus () {
-    NODE="$1"
+    NODE="$1" # Get node from argument 1
     TEST=$(vagrant status ${NODE}) # get the Vagrant status message
     # Define REGEX vars for the status
     REGEX1="${NODE} *running"
@@ -38,36 +46,35 @@ checkNodeStatus () {
     elif [[ $TEST =~ $REGEX1 ]]; then 
         return 1 # running
     else
-        return 0 # down
+        return 0 # down / not found
     fi
 }
 
 # Stop Node
 stopNode () {
-    NODE=$1
+    NODE=$1 # Get node from argument 1
     checkNodeStatus $NODE
     STATUS=$?
-    if [[ $STATUS -ne 0 && $STATUS -ne 2 && $STATUS -ne 3 ]]; then # if nod eis running
-        echo "${GREEN}stopping node \"${NODE}\"${RESET}"
+    if [[ $STATUS -ne 0 && $STATUS -ne 2 && $STATUS -ne 3 ]]; then # if node is running
+        echo "${GREEN}Stopping node \"${NODE}\"${RESET}"
         vagrant halt $NODE
         exit 0 # success
     else 
-        echo "${YELLOW}Node \"${NODE}\" is already stopped or not existent.${RESET}"
-        exit 1
+        echo "${YELLOW}Node \"${NODE}\" is already stopped or does not exist.${RESET}"
+        exit 1 # no success
     fi
 
 }
 
 # Start Node
 startNode () {
-    #fin
-    NODE=$1
+    NODE=$1 # Get node from argument 1
     checkNodeStatus $NODE
-    if [[ $? -eq 1 ]]; then
+    if [[ $? -eq 1 ]]; then # if node is not running
         echo "${YELLOW}Node \"${NODE}\" is already running.${RESET}"
         exit 1 # no success
     else 
-        echo "${GREEN}starting node \"${NODE}\"${RESET}"
+        echo "${GREEN}Starting node \"${NODE}\"${RESET}"
         vagrant up $NODE
         exit 0 # success
     fi
@@ -75,41 +82,41 @@ startNode () {
 
 # Deploy Nextcloud
 deployNode () {
-    AMOUNT=$1
+    AMOUNT=$1 # get Loop amount from argument 1
     REGEX='^[1-9]+$'
-    if ! [[ $AMOUNT =~ $REGEX ]]; then
-        AMOUNT=1
+    if ! [[ $AMOUNT =~ $REGEX ]]; then # check if Amount is a numeric number
+        AMOUNT=1 # else, set amount to 0
     fi
 
+    OUTPUTARRAY=()
     COUNTER=0
-    while [ $COUNTER -lt $AMOUNT ]; do
+    while [ $COUNTER -lt $AMOUNT ]; do # Loop Amount times through deployment
         IP_PREFIX="10.9.8." # make IP prefix
         PORT_PREFIX="80" # make Port Prefix
 
-        NODES=($(jq '.nodes | keys | .[]' nodes.json)) # Get all active nodes from json
+        NODES=($(jq '.nodes | keys | .[]' $JSONFILE)) # Get all active nodes from json
         NODES=("${NODES[@]:1}") # cut the first (Database Server) from array
         if [[ ${NODES[@]} != "" ]]; then # check if any node is in the json file
             NODEARRAY=()
-            for string in ${NODES[@]}
-            do
+            for string in ${NODES[@]}; do # loop through nodes
                 OUTPUT=${string:5:1} # Cut node away and leve number
-                NODEARRAY+=("${OUTPUT}")
+                NODEARRAY+=("${OUTPUT}") # Add node number to array
             done
             NUM=1
             EXITER=0
-            while [[ NUM -eq 1 ]]; do
-                if [[ $EXITER -eq 0 ]]; then
+            while [[ NUM -eq 1 ]]; do # Loop through until new node number is found
+                if [[ $EXITER -eq 0 ]]; then # check if new node number is found
                     NUMBER=$(shuf -i 11-99 -n 1) # Generate random number between 11 and 99
-                    for NODE in ${NODEARRAY[@]}; do
+                    for NODE in ${NODEARRAY[@]}; do # Loop through nodes array
                         EXITER=0
-                        if [[ $NUMBER -eq $NODE ]]; then
-                            break
+                        if [[ $NUMBER -eq $NODE ]]; then # check if random number matches current node number
+                            break # does match (BAD)
                         else 
-                            EXITER=1
+                            EXITER=1 # does not match (GOOD)
                         fi
                     done
                 else
-                    NUM=0
+                    NUM=0 # Found new not used node number
                 fi
             done
         else
@@ -121,14 +128,14 @@ deployNode () {
         
         checkNodeStatus dbs
         STATUS=$?
-        if [[ STATUS -eq 1 ]]; then
+        if [[ STATUS -eq 1 ]]; then # check if Database Server is Online
 
-            # Define variables
+            # Define variables (Add new found node number to prefixes)
             IP="${IP_PREFIX}${NUMBER}"
             PORT="${PORT_PREFIX}${NUMBER}"
             NODE="node${NUMBER}"
 
-            mysql -h 10.9.8.101 -u root -pPassword123 -e "CREATE DATABASE ${NODE};"
+            mysql -h $DBS_IP -u $DBS_USER -p$DBS_PW -e "CREATE DATABASE ${NODE};" # create new db for node
             echo "${GREEN}Created Database for ${NODE}"
             NEWNODE="{
                 \"${NODE}\":{
@@ -145,49 +152,52 @@ deployNode () {
                     \"script\":\"scripts/ncinstall.sh\",
                     \"args\":\"${NODE}\"
                 }
-            }"
-            echo $(jq --argjson NEWNODE "$NEWNODE" '.nodes += $NEWNODE' nodes.json) > nodes.json # overwriting 
+            }" # generating new node json object
+            echo $(jq --argjson NEWNODE "$NEWNODE" '.nodes += $NEWNODE' $JSONFILE) > $JSONFILE # overwriting  old json file with new informations
 
-            vagrant reload
-            vagrant up $NODE
+            vagrant reload # reload vagrant json file
+            vagrant up $NODE # start new node up
 
             echo "${GREEN}Deployed ${NODE}${RESET}"
 
             echo "NODE: ${NODE}"
             echo "IP: ${IP}"
             echo "PORT: ${PORT}"
+            OUTPUTARRAY+=("${NODE}: http://${IP}:${PORT}") # Add information to Output array
         else
+            # DB Server is not Online
             echo "${YELLOW}Warning! DB Server is Offline${RESET}"
             echo "${YELLOW}- Please do ${0} start dbs, or ${0} init.${RESET}"
             echo "${RED}Error! cant create new node"
         fi
-        ((COUNTER++))
+        ((COUNTER++)) # increase counter +1
     done
+    echo ${OUTPUTARRAY[@]} 
 }
 
 # Remove Nextcloud node
 destroyNode () {
-    NODE2=$1
-    if [[ $NODE != "dbs" ]]; then
+    NODE2=$1 # Get node from argument 1
+    if [[ $NODE != "dbs" ]]; then # check if node is not the Database Server
         checkNodeStatus $NODE2
         STATUS=$?
         if [[ $STATUS -eq 1 || $STATUS -eq 2 || $STATUS -eq 3 ]]; then # check if node exists (cant destroy not existing node)
             echo "${GREEN}destroying ${NODE2}...${RESET}"
             checkNodeStatus "dbs"
             STATUS=$?
-            if [[ STATUS -eq 1 ]]; then
-                mysql -h 10.9.8.101 -u root -pPassword123 -e "DROP DATABASE ${NODE2};"
+            if [[ STATUS -eq 1 ]]; then # Check if the Database server is Online
+                mysql -h $DBS_IP -u $DBS_USER -p$DBS_PW -e "DROP DATABASE ${NODE2};" # Remove Database from node
             else
                 echo "${YELLOW}DB Server is Offline${RESET}"
                 echo "${YELLOW}cant remove ${NODE2}s Databse${RESET}"
             fi
 
-            vagrant destroy $NODE2
+            vagrant destroy $NODE2 # Destroy node
                 
             FILTER=".nodes.${NODE2}" # adding node as jq filter
-            echo $(jq "del($FILTER)" nodes.json) > nodes.json # Remove node from json file
+            echo $(jq "del($FILTER)" $JSONFILE) > $JSONFILE # Remove node from json file
 
-            vagrant reload
+            vagrant reload # Reload Vigrant Json file
             echo "${GREEN}Destroy Successful${RESET}"
 
         else
@@ -206,7 +216,7 @@ destroyNode () {
 FOLDER=$(pwd)
 read -p "${BLUE}Are you in the correct folder? \"${FOLDER}\". y or n: ${RESET}" ACCEPT # ask user if he is in the right folder
 ACCEPT=$(echo $ACCEPT | tr a-z A-Z) # make $accept to uppercase
-if [[ "${ACCEPT}" != "Y" ]]; then
+if [[ "${ACCEPT}" != "Y" ]]; then # check if user accepts
     echo "${RED}you have exited the script${RESET}"
     exit 1 # exit script if user don't says "Y"
 fi
@@ -221,10 +231,11 @@ fi
 if [[ "${1}" ==  "init" ]]; then
     # Only start init things
     echo "${GREEN}Create Init vagrant...${RESET}"
-    vagrant destroy -f
+    echo $FRESHJSON > $JSONFILE  # restore nodes json file to defauts (just db Server)
+    vagrant destroy -f # destroy all existant 
     checkNodeStatus dbs
     STATUS=$?
-    if [[ $STATUS -eq 3 ]]
+    if [[ $STATUS -eq 3 ]] # check if Database is not created
     then
         vagrant up dbs
     fi
@@ -232,24 +243,28 @@ if [[ "${1}" ==  "init" ]]; then
 elif [[ "${1}" ==  "start" ]]; then
 # make option to start only the nodes or the nodes with db
     if [[ $# -ge 2 ]]; then
-        startNode $2
+        startNode $2 # use specified node name to start
     else
+        # if no node is given, exit
         echo "${RED}Not enough arguments. ${USAGE}${RESET}"
+        exit 1
     fi
 # Stop -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "stop" ]]; then
     # make option to stop only the nodes or the nodes with db
     if [[ $# -ge 2 ]]; then
-        stopNode $2
+        stopNode $2 # use specified node name to stop
     else
+        # if no node is given, exit
         echo "${RED}Not enough arguments. ${USAGE}${RESET}"
+        exit 1
     fi
 # Deploy -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "deploy" ]]; then
     if [[ $# -ge 2 ]]; then
-        deployNode $2
+        deployNode $2 # if a number is specified, use it
     else 
-        deployNode 1
+        deployNode 1 # if no number is specified, use 1
     fi
 # Destroy -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "destroy" ]]; then
@@ -258,28 +273,11 @@ elif [[ "${1}" ==  "destroy" ]]; then
         destroyNode $2
     else
         # if no args, destoy all
-        vagrant destroy -f
-        NEWSCRIPT='{
-        "nodes":{
-                "dbs":{
-                    "description":"Database Server",
-                    "ip":"10.9.8.101",
-                    "ports":[
-                        {
-                            "guest":3306,
-                            "host":3306
-                        }
-                    ],
-                    "memory":3072,
-                    "cpu":2,
-                    "script":"scripts/dbinstall.sh",
-                    "args":""
-                }
-            }
-        }'
-        echo $NEWSCRIPT > nodes.json
+        vagrant destroy -f # Destroy all machines and nodes
+        echo $FRESHJSON > $JSONFILE # restore nodes json file to defauts (just db Server)
     fi
 # Else -----------------------------------------------------------------------------
 else
+    # Display this message if no argument matches
     echo "${RED}Wrong arguments. ${USAGE}${RESET}"
 fi
