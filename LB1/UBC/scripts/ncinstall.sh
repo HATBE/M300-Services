@@ -19,7 +19,7 @@ NEXTCLOUD_ADMIN_PW="Password123"
 
 # Database
 MYSQL_HOST="10.9.8.101"
-MYSQL_USER="ncuser"
+MYSQL_USER="root"
 MYSQL_PW="Password123"
 
 ## Installation
@@ -41,11 +41,4 @@ rm /var/www/html/nextcloud -R
 chown www-data:www-data /var/www/html/ -R
 # TODO: make sites-available stuff: https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
 
-# TODO: mount shared data folger from other server
-
 su -l www-data -s /bin/bash -c "php /var/www/html/occ maintenance:install --database 'mysql' --database-host '${MYSQL_HOST}' --database-name '${1}' --database-user '${MYSQL_USER}' --database-pass '${MYSQL_PW}' --admin-user '${NEXTCLOUD_ADMIN_USER}' --admin-pass '${NEXTCLOUD_ADMIN_PW}'" # Configure/Install Nextcloud
-
-
-#echo "su -l www-data -s /bin/bash -c php /var/www/html/occ maintenance:install --database 'mysql' --database-host '${MYSQL_HOST}' --database-name '${1}' --database-user '${MYSQL_USER}' --database-pass '${MYSQL_PW}' --admin-user '${NEXTCLOUD_ADMIN_USER}' --admin-pass '${NEXTCLOUD_ADMIN_PW}'" # Configure/Install Nextcloud
-
-# TODO: --data-dir

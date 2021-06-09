@@ -6,11 +6,6 @@
 ## Define vars
 MYSQL_ROOT_PW="Password123"
 
-MYSQL_NEXTCLOUD_PW="Password123"
-MYSQL_NEXTCLOUD_USER="ncuser"
-
-NODES=( "node1" "node2" ) # Temp
-
 ## Installation
 apt update -y
 apt upgrade -y
@@ -26,14 +21,6 @@ mysql -e "UPDATE mysql.user SET Password = PASSWORD('${MYSQL_ROOT_PW}') WHERE Us
 mysql -e "DROP USER IF EXISTS ''@'localhost';" # Remove the Anonymous User
 mysql -e "DROP USER IF EXISTS ''@'$(hostname)';"
 mysql -e "DROP DATABASE IF EXISTS test;" # Remove the Demo database
-
-mysql -e "CREATE USER '${MYSQL_NEXTCLOUD_USER}'@'%' IDENTIFIED BY '${MYSQL_NEXTCLOUD_PW}';"
-for NODE in "${NODES[@]}"; do
-    echo "create node ${NODE}"
-
-    mysql -e "CREATE DATABASE ${NODE};"
-
-    mysql -e "GRANT ALL PRIVILEGES ON ${NODE}.* to '${MYSQL_NEXTCLOUD_USER}'@'%';"
-done
+mysql -e "UPDATE mysql.user SET Host='%' WHERE User='root';"
 
 mysql -e "FLUSH PRIVILEGES;"
