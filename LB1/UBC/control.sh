@@ -17,7 +17,7 @@ BLUE=`tput setaf 6`
 RESET=`tput sgr0`
 
 USAGE="${YELLOW}Usage: ${0} <install:deploy:destroy:start:stop>${RESET}"
-FRESHJSON="{\"nodes\":{\"dbs\":{\"description\":\"Database Server\",\"ip\":\"${DBS_IP}\",\"ports\":[{\"guest\":3306,\"host\":3306}],\"memory\":3072,\"cpu\":2,\"script\":\"scripts/dbinstall.sh\",\"args\":\"\"}}}"
+FRESHJSON="{\"nodes\":{\"dbs\":{\"description\":\"Database Server\",\"ip\":\"${DBS_IP}\",\"ports\":[],\"memory\":3072,\"cpu\":2,\"script\":\"scripts/dbinstall.sh\",\"args\":\"\"}}}"
 
 
 # check if user is Root user
@@ -87,7 +87,7 @@ deployNode () {
     if ! [[ $AMOUNT =~ $REGEX ]]; then # check if Amount is a numeric number
         AMOUNT=1 # else, set amount to 0
     fi
-
+    echo "${BLUE}Deploying ${AMOUNT} Nodes${RESET}"
     OUTPUTARRAY=()
     COUNTER=0
     while [ $COUNTER -lt $AMOUNT ]; do # Loop Amount times through deployment
@@ -95,7 +95,9 @@ deployNode () {
         PORT_PREFIX="80" # make Port Prefix
 
         NODES=($(jq '.nodes | keys | .[]' $JSONFILE)) # Get all active nodes from json
+
         NODES=("${NODES[@]:1}") # cut the first (Database Server) from array
+        
         if [[ ${NODES[@]} != "" ]]; then # check if any node is in the json file
             NODEARRAY=()
             for string in ${NODES[@]}; do # loop through nodes
@@ -160,10 +162,7 @@ deployNode () {
 
             echo "${GREEN}Deployed ${NODE}${RESET}"
 
-            echo "NODE: ${NODE}"
-            echo "IP: ${IP}"
-            echo "PORT: ${PORT}"
-            OUTPUTARRAY+=("${NODE}: http://${IP}:${PORT}") # Add information to Output array
+            OUTPUTARRAY+=("${NODE}: http://localhost:${PORT} - Username: admin, Passwort: Password123") # Add information to Output array
         else
             # DB Server is not Online
             echo "${YELLOW}Warning! DB Server is Offline${RESET}"
@@ -172,7 +171,10 @@ deployNode () {
         fi
         ((COUNTER++)) # increase counter +1
     done
-    echo ${OUTPUTARRAY[@]} 
+    echo "${GREEN}All Nodes Deployed!${RESET}}"
+    for NODE in ${OUTPUTARRAY[@]}; do
+        echo "${NODE}"
+    done
 }
 
 # Remove Nextcloud node
@@ -276,6 +278,11 @@ elif [[ "${1}" ==  "destroy" ]]; then
         vagrant destroy -f # Destroy all machines and nodes
         echo $FRESHJSON > $JSONFILE # restore nodes json file to defauts (just db Server)
     fi
+# List -----------------------------------------------------------------------------
+elif [[ "${1}" ==  "list" ]]; then
+    echo "listing items"
+    NODES=($(jq '.nodes | keys | .[]' $JSONFILE))
+    echo ${NODES[@]}
 # Else -----------------------------------------------------------------------------
 else
     # Display this message if no argument matches
