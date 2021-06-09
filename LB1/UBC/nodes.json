@@ -4,7 +4,10 @@
             "description":"Database Server",
             "ip":"10.9.8.101",
             "ports":[
-
+                {
+                    "guest":3306,
+                    "host":3306
+                }
             ],
             "memory":3072,
             "cpu":2,

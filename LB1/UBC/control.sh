@@ -125,9 +125,13 @@ deployNode () {
     SCRIPT="scripts/ncinstall.sh"
     ARGS="${NODE}"
 
-    echo $PORT
-    echo $IP
-    echo $NODE
+    echo "Description: ${DESCRIPTION}"
+    echo "IP: ${IP}"
+    echo "PORT: ${PORT}"
+    echo "NODE: ${NODE}"
+    echo "MEMORY: ${MEMORY}"
+    echo "CPU: ${CPU}"
+    echo "Script: ${SCRIPT} ${ARGS}"
 
     echo "Deploying..."
 
@@ -135,8 +139,8 @@ deployNode () {
     #STATUS=$?
     #if [[ STATUS -eq 1 ]]
     #then
-    #    mysql -h 10.9.8.11 -u ncuser -pPassword123 -e "CREATE DATABASE ${NODE};"
-    #    mysql -h 10.9.8.11 -u ncuser -pPassword123 -e "FLUSH PRIVILEGES";
+    #    mysql -h 10.9.8.101 -u ncuser -pPassword123 -e "CREATE DATABASE ${NODE};"
+    #    mysql -h 10.9.8.101 -u ncuser -pPassword123 -e "GRANT ALL PRIVILEGES ON ${NODE}.* to 'ncuser'@'%';"
 
         # Create vm usw. usw # add node to json
 
