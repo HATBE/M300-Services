@@ -4,20 +4,19 @@
 # Part from "Ultra Bad Cloud (UBC)"
 
 # TODO;
-   # Init (check if no vagrant isset, else destroy and build new (ask user)
-   # Start (all/node)
-   # Stop (all node)
-   # Desttoy (all/node) if node, destroy db!)
    # Deploy (take all nodes, cut node save number create new nodes in empty spaces (1,2,4,5) -> 3, create functiln, make deploy loop for more ghan one deploy at a time, print all data, login, port, usw to file .csv
-
-if [[ $UID -eq 0 ]]
-then
-    echo "You cant be root to use this Script!"
-    exit 1
-fi
 
 JSONFILE="nodes.json"
 
+if [[ $UID -eq 0 ]]
+then
+    echo "You cant't be the root user, to use this script!"
+    exit 1
+fi
+
+####################################################################
+# FUNCTIONS
+####################################################################
 # Check Node
 checkNodeStatus () {
     #fin
@@ -79,15 +78,15 @@ startNode () {
 deployNode () {
     #exit 1 # remove after finish
     # TODO: connect to db server, create db
-    # add node to json
-    # vagrant reload
+        # add node to json
+        # vagrant reload
 
-    RANGE=({1..100})
-    IP_PREFIX="10.9.8."
-    PORT_PREFIX="80"
+    RANGE=({1..100}) # Create random number between 1 and 100
+    IP_PREFIX="10.9.8." # make IP prefix
+    PORT_PREFIX="80" # make Port Prefix
 
-    NODES=($(jq '.nodes | keys | .[]' nodes.json))
-    NODES=("${NODES[@]:1}")
+    NODES=($(jq '.nodes | keys | .[]' nodes.json)) # Get all active nodes from json
+    NODES=("${NODES[@]:1}") # cut the first (Database Server) from array
     NODEARRAY=()
     for string in ${NODES[@]}
     do
@@ -157,29 +156,40 @@ deployNode () {
 
 # Remove Nextcloud node
 destroyNode () {
-    # TODO: halt node
-        # destroy node
-        # remove node from json
-        # vagrant reload
-        # connect to db server, delete db
+    #fin
     NODE=$1
-    checkNodeStatus $NODE
-    STATUS=$?
-    if [[ $STATUS -eq 1 || $STATUS -eq 2 || $STATUS -eq 3 ]]
+    if [[ $NODE != "dbs" ]]
     then
-        echo "destroy..."
-        vagrant destroy $NODE
+        checkNodeStatus $NODE
+        STATUS=$?
+        if [[ $STATUS -eq 1 || $STATUS -eq 2 || $STATUS -eq 3 ]] # check if node exists (cant destroy not existing node)
+        then
+            echo "destroying ${NODE}..."
+            checkNodeStatus "dbs"
+            STATUS=$?
+            if [[ STATUS -eq 1 ]]
+            then
+                mysql -h 10.9.8.101 -u ncuser -pPassword123 -e "DROP DATABASE ${NODE};"
+
+            else
+                echo "DB Server is Offline"
+                echo "cant remove ${NODE}s Databse"
+            fi
+
+            vagrant destroy $NODE
+                
+            FILTER=".nodes.${NODE}" # adding node as jq filter
+            echo $(jq "del($FILTER)" nodes.json) > nodes.json # Remove node from json file
+
+            vagrant reload
+            echo "Destroy Successful"
+
+        else
+            echo "${NODE} is not online."
+        fi  
     else
-        echo "${NODE} is not online."
+        echo "cant destroy ${NODE}"
     fi
-}
-
-jsonHelper() {
-    FILTER=$1
-
-    RES=$(jq -r "${FILTER}" ${JSONFILE})
-    # deljson -> echo $(jq 'del(${FILTER})' $JSONFILE) > $JSONFILE
-    echo $RES
 }
 
 ####################################################################
