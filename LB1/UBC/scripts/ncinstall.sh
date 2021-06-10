@@ -24,7 +24,7 @@ MYSQL_PW="Password123"
 
 ## Installation
 apt update -y 
-apt upgrade -y
+#apt upgrade -y
 
 apt install unzip -y
 apt install apache2 apache2-utils -y

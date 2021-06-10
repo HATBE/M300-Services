@@ -16,7 +16,7 @@ YELLOW=`tput setaf 3`
 BLUE=`tput setaf 6`
 RESET=`tput sgr0`
 
-USAGE="${YELLOW}Usage: ${0} <install:deploy:destroy:start:stop>${RESET}"
+USAGE="${YELLOW}Usage: ${0} <init:deploy [amount]:destroy [node]:start <node>:stop <node>:list>${RESET}"
 FRESHJSON="{\"nodes\":{\"dbs\":{\"description\":\"Database Server\",\"ip\":\"${DBS_IP}\",\"ports\":[],\"memory\":3072,\"cpu\":2,\"script\":\"scripts/dbinstall.sh\",\"args\":\"\"}}}"
 
 
@@ -157,12 +157,12 @@ deployNode () {
             }" # generating new node json object
             echo $(jq --argjson NEWNODE "$NEWNODE" '.nodes += $NEWNODE' $JSONFILE) > $JSONFILE # overwriting  old json file with new informations
 
-            vagrant reload # reload vagrant json file
+            #vagrant reload # reload vagrant json file
             vagrant up $NODE # start new node up
 
             echo "${GREEN}Deployed ${NODE}${RESET}"
 
-            OUTPUTARRAY+=("${NODE}: http://localhost:${PORT} - Username: admin, Passwort: Password123") # Add information to Output array
+            OUTPUTARRAY+=("${NODE}: http://localhost:${PORT} Username: ${BLUE}admin${RESET} Passwort: ${BLUE}Password123${RESET}") # Add information to Output array
         else
             # DB Server is not Online
             echo "${YELLOW}Warning! DB Server is Offline${RESET}"
@@ -199,7 +199,7 @@ destroyNode () {
             FILTER=".nodes.${NODE2}" # adding node as jq filter
             echo $(jq "del($FILTER)" $JSONFILE) > $JSONFILE # Remove node from json file
 
-            vagrant reload # Reload Vigrant Json file
+            #vagrant reload # Reload Vigrant Json file
             echo "${GREEN}Destroy Successful${RESET}"
 
         else
@@ -280,9 +280,20 @@ elif [[ "${1}" ==  "destroy" ]]; then
     fi
 # List -----------------------------------------------------------------------------
 elif [[ "${1}" ==  "list" ]]; then
-    echo "listing items"
-    NODES=($(jq '.nodes | keys | .[]' $JSONFILE))
-    echo ${NODES[@]}
+    echo "${GREEN}listing items...${RESET}"
+    NODES=($(jq '.nodes | keys | .[]' $JSONFILE)) # Select all nodes
+    NODES=("${NODES[@]:1}") # cut the first (Database Server) from array
+    if [[ ${#NODES[@]} -eq 0 ]]; then
+        echo "${RED}No Nodes found!${RESET}"
+        exit 1
+    fi
+    for NODE in ${NODES[@]}; do # Loop through all elements
+        # Get Elements from json file
+        DESCRIPTION=$(jq -r ".nodes.${NODE}.description" $JSONFILE)
+        IP=$(jq -r ".nodes.${NODE}.ip" $JSONFILE)
+        PORT=$(jq -r ".nodes.${NODE}.ports | .[].host" $JSONFILE )
+        echo "${RED}${NODE}: ${BLUE}$DESCRIPTION: ${YELLOW}${IP}:${PORT}${RESET}" # Display nodes
+    done
 # Else -----------------------------------------------------------------------------
 else
     # Display this message if no argument matches

@@ -8,7 +8,7 @@ MYSQL_ROOT_PW="Password123"
 
 ## Installation
 apt update -y
-apt upgrade -y
+#apt upgrade -y
 
 apt install mariadb-server mariadb-client -y
 
