@@ -318,3 +318,6 @@ Text
 ## Testing
 Text
 ## Quellen
+
+	Udemy https://www.udemy.com/course/linux-shell-scripting-projects/[10.06.2021] Shell script parts
+	MC-B github
