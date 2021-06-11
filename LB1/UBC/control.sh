@@ -38,15 +38,15 @@ checkNodeStatus () {
     REGEX2="${NODE} *poweroff"
     REGEX3="${NODE} *not *created"
 
-    # Check the Status of the Nodes
+   # Check the Status of the Nodes
     if [[ $TEST =~ $REGEX3 ]]; then 
-        return 3 # not created
+	    return 3 # not created
     elif [[ $TEST =~ $REGEX2 ]]; then 
-        return 2 # poweroff
+	    return 2 # poweroff
     elif [[ $TEST =~ $REGEX1 ]]; then 
-        return 1 # running
+	    return 1 # running
     else
-        return 0 # down / not found
+	    return 0 # down / not found
     fi
 }
 
@@ -157,7 +157,6 @@ deployNode () {
             }" # generating new node json object
             echo $(jq --argjson NEWNODE "$NEWNODE" '.nodes += $NEWNODE' $JSONFILE) > $JSONFILE # overwriting  old json file with new informations
 
-            #vagrant reload # reload vagrant json file
             vagrant up $NODE # start new node up
 
             echo "${GREEN}Deployed ${NODE}${RESET}"
@@ -199,7 +198,6 @@ destroyNode () {
             FILTER=".nodes.${NODE2}" # adding node as jq filter
             echo $(jq "del($FILTER)" $JSONFILE) > $JSONFILE # Remove node from json file
 
-            #vagrant reload # Reload Vigrant Json file
             echo "${GREEN}Destroy Successful${RESET}"
 
         else
@@ -287,12 +285,34 @@ elif [[ "${1}" ==  "list" ]]; then
         echo "${RED}No Nodes found!${RESET}"
         exit 1
     fi
+    echo "${GREEN}There are ${BLUE}${#NODES[@]}${GREEN} nodes${RESET}" # List amount of nodes
     for NODE in ${NODES[@]}; do # Loop through all elements
         # Get Elements from json file
         DESCRIPTION=$(jq -r ".nodes.${NODE}.description" $JSONFILE)
         IP=$(jq -r ".nodes.${NODE}.ip" $JSONFILE)
         PORT=$(jq -r ".nodes.${NODE}.ports | .[].host" $JSONFILE )
-        echo "${RED}${NODE}: ${BLUE}$DESCRIPTION: ${YELLOW}${IP}:${PORT}${RESET}" # Display nodes
+        
+        # Get Status of node
+        NODE=${NODE:1:6} # cut away '"'
+        checkNodeStatus $NODE name
+    	STATUS=$?
+    	if [[ $STATUS -eq 3 ]]; then 
+	        STATUS="${YELLOW}not created${RESET}"
+        elif [[ $STATUS -eq 2 ]]; then 
+            STATUS="${RED}poweroff${RESET}"
+        elif [[ $STATUS -eq 1 ]]; then 
+            STATUS="${GREEN}running${RESET}"
+        else
+            STATUS="${RED}unknown${RESET}"
+        fi
+        
+        # Display Node
+        echo "${BLUE}${NODE}${RESET}"
+        echo "${BLUE}Status: ${YELLOW}${STATUS}${RESET}"
+        echo "${BLUE}Description: ${YELLOW}${DESCRIPTION}${RESET}"
+        echo "${BLUE}IP: ${YELLOW}${IP}:${PORT}${RESET}"
+        echo "${BLUE}Local: ${YELLOW}http://localhost:${PORT}${RESET}"
+        echo "------------------------------------------------------------------"
     done
 # Else -----------------------------------------------------------------------------
 else
