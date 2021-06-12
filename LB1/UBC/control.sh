@@ -170,7 +170,7 @@ deployNode () {
         fi
         ((COUNTER++)) # increase counter +1
     done
-    echo "${GREEN}All Nodes Deployed!${RESET}}"
+    echo "${GREEN}All Nodes Deployed!${RESET}"
     for NODE in ${OUTPUTARRAY[@]}; do
         echo "${NODE}"
     done
