@@ -42,9 +42,9 @@
     - [5.6.1 - Control script](#561---control-script)
       - [5.6.1.1 - init](#5611---init)
       - [5.6.1.2 - deploy](#5612---deploy)
-    - [5.6.1.3 - Start / Stop](#5613---start--stop)
+      - [5.6.1.3 - Start / Stop](#5613---start--stop)
       - [5.6.1.4 - list](#5614---list)
-    - [5.6.1.5 - destroy](#5615---destroy)
+      - [5.6.1.5 - destroy](#5615---destroy)
   - [5.7 - Testing](#57---testing)
     - [5.7.1 - Vorbereitung](#571---vorbereitung)
     - [5.7.2 - Init](#572---init)
@@ -52,11 +52,13 @@
     - [5.7.4 - Start / Stop](#574---start--stop)
     - [5.7.5 - List](#575---list)
     - [5.7.6 - Destroy](#576---destroy)
-- [6 - Quellen](#6---quellen)
-
+- [6 - Reflexion](#6---reflexion)
+- [7 - Quellen](#7---quellen)
 
 # Einleitung
-Da ich auf einem Ubuntu 21.04 arbeite, werde ich nur die Installations- und Konfigurationsmethoden dafür erklären.
+Für die LB1 vom Modul 300 habe ich mich für ein Projekt entschieden dass in Kapitel [Projekt Umfang](#51---projekt-umfang) weiter beschrieben wird.
+
+Da ich auf einem Ubuntu 20.04 arbeite, werde ich nur die Installations- und Konfigurationsmethoden dafür erklären.
 # 1 - Virtualbox
 ## 1.1 - Installation
 Um Virtualbox zu installieren, muss nur dieser Befehl ausgeführt werden.
@@ -990,7 +992,7 @@ Wenn der "__deploy__" Befehl mit einer anzahl ausgeführt wird, passiert folgend
 Am ende des deployen, werden nochmals alle Daten der gerade erstellten instanzen augegeben.
 
 ![img](images/4MKF04K.png)
-### 5.6.1.3 - Start / Stop
+#### 5.6.1.3 - Start / Stop
 ```shell
 ./control.sh stop node1
 ```
@@ -1035,7 +1037,7 @@ Wenn noch keine nodes vorhanden sind, ist der Output folgendermassen.
 
 ![img](images/y9G8dSe.png)
 
-### 5.6.1.5 - destroy
+#### 5.6.1.5 - destroy
 ```shell
 ./control.sh destroy node1
 ```
@@ -1245,11 +1247,18 @@ In der Liste werden nun auch keine mehr angezeigt.
 
 ![img](images/y9G8dSe.png)
 
-# 6 - Quellen
+# 6 - Reflexion
+
+In diesem Projekt habe ich sehr viel gelernt, ich habe mich das erste Mal mit Vagrant auseinandergesetzt, ich habe mich für dieses Projekt auch das erste Mal richtig mit bash Scripts auseinandergesetzt, ich muss sagen, es hat mir spass gemacht, und ich werde definitiv weiter mit bash Scripts arbeiten.
+Leider konnte ich für dieses Projekt nicht alles umsetzen, was ich wollte, Beispielsweise einen reverseproxy und einen Data Server, da mir die zeit nicht gereicht hat. Grundsätzlich war die Zeit für dieses Projekt etwas knapp, dies kann und wird aber wahrscheinlich daran liegen, dass ich etwas zu viel gemacht habe.
+
+# 7 - Quellen
 
 - Udemy (Shell script parts): https://www.udemy.com/course/linux-shell-scripting-projects/ [10.06.2021]
-- MC-B github: https://github.com/mc-b/M300/tree/master [10.6.2021]
-- Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [11.6.2021]
+- MC-B github: https://github.com/mc-b/M300/tree/master [10.06.2021]
+- Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [11.06.2021]
+- Nextcloud über occ Installieren: https://docs.nextcloud.com/server/latest/admin_manual/installation/command_line_installation.html [08.06.21]
+- Netcloud occ: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html [08.06.21]
 
 <br><br>
 
