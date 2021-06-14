@@ -12,11 +12,11 @@
   - [1.1 - Installation](#11---installation)
 - [2 - Vagrant](#2---vagrant)
   - [2.1 - Installation](#21---installation)
-    - [2.2 - Bedienung](#22---bedienung)
-    - [2.3 - Enfache VM Erstellen](#23---enfache-vm-erstellen)
-    - [2.4 - Vagrantfile](#24---vagrantfile)
-    - [2.5 - Mehrere VMs erstellen](#25---mehrere-vms-erstellen)
-    - [2.6 - Json](#26---json)
+  - [2.2 - Bedienung](#22---bedienung)
+  - [2.3 - Enfache VM Erstellen](#23---enfache-vm-erstellen)
+  - [2.4 - Vagrantfile](#24---vagrantfile)
+  - [2.5 - Mehrere VMs erstellen](#25---mehrere-vms-erstellen)
+  - [2.6 - Json](#26---json)
 - [3 - Visual Studio Code](#3---visual-studio-code)
   - [3.1 - Installation](#31---installation)
   - [3.2 - Konfiguration](#32---konfiguration)
@@ -33,28 +33,26 @@
     - [Ziele:](#ziele)
   - [5.2 - Umgebung vorbereiten](#52---umgebung-vorbereiten)
   - [5.3 - Vagrantfile](#53---vagrantfile)
-    - [5.2.1 - Json file](#521---json-file)
+    - [5.3.1 - Json file](#531---json-file)
   - [5.4 Control Script](#54-control-script)
   - [5.5 Installations Scripts](#55-installations-scripts)
     - [5.5.1 Datenbank Server](#551-datenbank-server)
     - [5.5.2 Nextcloud Server](#552-nextcloud-server)
   - [5.6 - Funktion](#56---funktion)
     - [5.6.1 - Control script](#561---control-script)
-    - [init](#init)
-    - [deploy](#deploy)
-    - [Start / Stop](#start--stop)
-    - [list](#list)
-    - [destroy](#destroy)
+      - [5.6.1.1 - init](#5611---init)
+      - [5.6.1.2 - deploy](#5612---deploy)
+    - [5.6.1.3 - Start / Stop](#5613---start--stop)
+      - [5.6.1.4 - list](#5614---list)
+    - [5.6.1.5 - destroy](#5615---destroy)
   - [5.7 - Testing](#57---testing)
     - [5.7.1 - Vorbereitung](#571---vorbereitung)
     - [5.7.2 - Init](#572---init)
     - [5.7.3 - Deploy](#573---deploy)
     - [5.7.4 - Start / Stop](#574---start--stop)
-    - [5.7.4 - List](#574---list)
-    - [5.7.5 - Destroy](#575---destroy)
+    - [5.7.5 - List](#575---list)
+    - [5.7.6 - Destroy](#576---destroy)
 - [6 - Quellen](#6---quellen)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 # Einleitung
@@ -71,7 +69,7 @@ Um Vagrant zu installieren, muss nur dieser Befehl ausgeführt werden.
 ```Shell
 $ apt install Vagrant
 ```
-### 2.2 - Bedienung
+## 2.2 - Bedienung
 Übersicht der Befehle
 | Befehl                    | Beschreibung                                                      |
 | ------------------------- | ----------------------------------------------------------------- |
@@ -82,7 +80,7 @@ $ apt install Vagrant
 | `vagrant port`            | Zeigt die Weitergeleiteten Ports der VM an                        |
 | `vagrant halt`            | Stoppt die laufende Virtuelle Maschine                            |
 | `vagrant destroy`         | Stoppt die Virtuelle Maschine und zerstört sie.                   |
-### 2.3 - Enfache VM Erstellen
+## 2.3 - Enfache VM Erstellen
 Um eine einfache VM zu erstellen, muss folgendes getan werden.\
 Zuerst muss die Box heruntergeladen und hinzugefügt werden.
 ```Shell 
@@ -95,7 +93,7 @@ $ vagrant init ubuntu/hirsute64 # Ubuntu 21.04 box initialisieren
 $ vagrant up # Box starten
 ```
 Die Boxen könenn hier gefunden werden: https://app.vagrantup.com/boxes/search
-### 2.4 - Vagrantfile
+## 2.4 - Vagrantfile
 Das Vagrantfile befindet sich in dem Verzeichnis in dem der Befehl "__vagrant init \<box\>__" ausgeführt wurde.\
 Ohne weitere Konfiguration sieht das Vagrantfile folgendermassen aus. (wenn alle Kommentare entfernt wurden).
 ```ruby 
@@ -166,7 +164,7 @@ Um ganze Scripts auszuführen, kann folgender Befehl genutzt werden.
 config.vm.provision "shell", path: "script.sh"
 ```
 
-### 2.5 - Mehrere VMs erstellen
+## 2.5 - Mehrere VMs erstellen
 Mit Vagrant ist es möglich mehrere Vms mit nur einem File zu erstellen, dies Zeige ich hier anhand eines Beispieles.
 
 ```shell
@@ -213,7 +211,7 @@ $ vagrant ssh box1
 
 ![img](images/5Nii12Y.png)
 
-### 2.6 - Json
+## 2.6 - Json
 Das Vagrantfile kann Json files einlesen und damit viel dynamischer konfiguriert werden.
 
 Hier ein Kleines Beispiel.
@@ -477,7 +475,7 @@ Vagrant.configure(2) do |config|
   end
 end
 ```
-### 5.2.1 - Json file
+### 5.3.1 - Json file
 Das Json file sieht direkt nach dem der Befehl "__./control init__" ausgeführt wurde, so aus.
 ```json 
 {
@@ -948,7 +946,7 @@ su -l www-data -s /bin/bash -c "php /var/www/html/occ maintenance:install --data
 ## 5.6 - Funktion
 ### 5.6.1 - Control script
 Funktionen des Control Scripts.
-### init
+#### 5.6.1.1 - init
 ```shell
 ./control.sh init
 ```
@@ -962,7 +960,7 @@ Nach dem ausführen des init Befehls, ist mit dem "__vagrant status__" command f
 
 ![img](images/ESy4krL.png)
 
-### deploy
+#### 5.6.1.2 - deploy
 ```shell
 ./control.sh deploy
 ```
@@ -992,7 +990,7 @@ Wenn der "__deploy__" Befehl mit einer anzahl ausgeführt wird, passiert folgend
 Am ende des deployen, werden nochmals alle Daten der gerade erstellten instanzen augegeben.
 
 ![img](images/4MKF04K.png)
-### Start / Stop
+### 5.6.1.3 - Start / Stop
 ```shell
 ./control.sh stop node1
 ```
@@ -1010,7 +1008,7 @@ Wenn der "__start__" Befehl ausgeführt wird, passiert folgendes.
 
 1. Es wird überpfüft ob die VM gestoppt ist, oder nicht erstellt wurde.
 2. Falls sie nicht läuft oder noch nicht erstellt wurde, wird sie gestartet.
-### list
+#### 5.6.1.4 - list
 ```shell
 ./control.sh list
 ```
@@ -1037,7 +1035,7 @@ Wenn noch keine nodes vorhanden sind, ist der Output folgendermassen.
 
 ![img](images/y9G8dSe.png)
 
-### destroy
+### 5.6.1.5 - destroy
 ```shell
 ./control.sh destroy node1
 ```
@@ -1186,7 +1184,7 @@ Nachdem die node gestartet wurde, sieht es in Virtualbox so aus.
 
 ![img](images/OIKJ89HH.png)
 
-### 5.7.4 - List
+### 5.7.5 - List
 
 Um alle nodes aufzulisten gibt es den Befehl __list__.\
 Wenn wir den __list__ Befehl nutzen, werden alle aktiven nodes aus dem json file geladen.
@@ -1211,7 +1209,7 @@ Sollten Keine nodes vorhanden sein, wird folgendes ausgegeben.
 
 ![img](images/y9G8dSe.png)
 
-### 5.7.5 - Destroy
+### 5.7.6 - Destroy
 
 Wenn nun eine oder alle nodes Zerstört werden sollen, kann der Befehl __destroy__ verwendet werden.
 
