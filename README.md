@@ -526,6 +526,23 @@ Um eine Weiterleitung zu kreiren, das File sites-enabled/001-reverseproxy.conf e
     ProxyPassReverse /master http://master
 ```
 
+## benutzer
+
+| Benutzername  | Funktion                                             |
+| ------------- | ---------------------------------------------------- | 
+| `root`        | Der Systemverwalter unter Linux                      |
+| `nobody`      | Wird von Prozessen als Benutzererkennung verwendet, wenn nur ein Minimum an Rechten vergeben werden soll  |
+| `cupsys`      | Benutzer des Druckdienstes CUPS                      |
+| `www-data`    | Benutzer des Webservers Apache                       |
+
+Die Benutzer stehen in der Datei /etc/passwd. Die Passwörter in der Datei /etc/shadow.
+
+Die Gruppen stehen in der Datei /etc/group.
+
+Das Homeverzeichnis setzt sich aus /home und dem jeweiligen Benutzernamen zusammen (z.B. /home/myaccount).
+
+mit ls -al können alle Berechtigungen angezeigt werden, die user/gruppen auf Files haben.
+
 # 30 - Container
 Text
 
