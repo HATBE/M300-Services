@@ -64,6 +64,7 @@ Bei __docker kill__ wird der hauptprozess gekillt und der Container gestoppt.
 ## 1.3 - Dockerfile
 
 
+
 # 800 - Projekt
 ## 800.1 - Projekt Umfang
 xxxxx
@@ -72,7 +73,8 @@ xxxxx
 xxxx
 
 ## 800.2 - Umgebung vorbereiten
-xxx
+### 800.2.1 - Server
+Für dieses Projekt werde ich nicht auf die TBZ Cloud setzen, sondern eine eigene VM auf meinem Proxmox Server installieren, auf dieser werden alle docker Container ausgeführt.
 
 ## 800.3 - Dockerfile
 
