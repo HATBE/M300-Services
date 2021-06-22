@@ -543,8 +543,208 @@ Das Homeverzeichnis setzt sich aus /home und dem jeweiligen Benutzernamen zusamm
 
 mit ls -al können alle Berechtigungen angezeigt werden, die user/gruppen auf Files haben.
 
+## Apache sichern
+
+HTTPS
+```shell
+# Default Konfiguration in /etc/apache2/sites-available freischalten (wird nach sites-enabled verlinkt)
+sudo a2ensite default-ssl.conf
+
+# SSL Modul in Apache2 aktivieren
+sudo a2enmod ssl
+
+# Optional HTTP deaktivieren
+sudo a2dissite 000-default.conf 
+
+# Datei /etc/apache2/ports.conf editieren und <Listen 80> durch Voranstellen von # deaktivieren
+sudo nano /etc/apache2/ports.conf
+
+# Apache Server frisch starten
+sudo service apache2 restart
+```
+
+Passwort
+```shell
+ # .htpasswd Datei erzeugen (ab dem zweiten User ohne -c), Password wird verlangt                        
+sudo htpasswd -c /etc/apache2/.htpasswd guest
+
+# /etc/apache2/sites-enabled/default-ssl.conf Editieren und vor </VirtualHost> folgendes Einfügen
+<Directory "/var/www/html">
+        AuthType Basic
+        AuthName "Restricted Content"
+        AuthUserFile /etc/apache2/.htpasswd
+        Require valid-user
+</Directory>
+```
 # 30 - Container
-Text
+
+Merkmale
+
+    Container teilen sich Ressourcen mit dem Host-Betriebssystem
+    Container können im Bruchteil einer Sekunde gestartet und gestoppt werden
+    Anwendungen, die in Containern laufen, verursachen wenig bis gar keinen Overhead
+    Container sind portierbar --> Fertig mit "Aber bei mir auf dem Rechner lief es doch!"
+    Container sind leichtgewichtig, d.h. es können dutzende parallel betrieben werden.
+    Container sind "Cloud-ready"!
+
+## Docker
+
+### Architektur
+
+Docker Deamon
+
+- Erstellen, Ausführen und Überwachen der Container
+- Bauen und Speichern von Images
+
+Der Docker Daemon wird normalerweise durch das Host-Betriebssystem gestartet.
+
+Docker Client
+
+- Docker wird über die Kommandozeile (CLI) mittels des Docker Clients bedient
+- Kommuniziert per HTTP REST mit dem Docker Daemon
+
+Da die gesamte Kommunikation über HTTP abläuft, ist es einfach, sich mit entfernten Docker Daemons zu verbinden und Bindings an Programmiersprachen zu entwickeln.
+
+Images
+
+- Images sind gebuildete Umgebungen welche als Container gestartet werden können
+- Images sind nicht veränderbar, sondern können nur neu gebuildet werden.
+- Images bestehen aus Namen und Version (TAG), z.B. ubuntu:16.04.
+- Wird keine Version angegeben wird automatisch :latest angefügt.
+
+Container
+
+- Container sind die ausgeführten Images
+- Ein Image kann beliebig oft als Container ausgeführt werden
+- Container bzw. deren Inhalte können verändert werden, dazu werden sogenannte Union File Systems verwendet, welche nur die Änderungen zum original Image speichern.
+
+Docker Registry
+
+- In Docker Registries werden Images abgelegt und verteilt
+
+Die Standard-Registry ist der Docker Hub, auf dem tausende öffentlich verfügbarer Images zur Verfügung stehen, aber auch "offizielle" Images.
+
+Viele Organisationen und Firmen nutzen eigene Registries, um kommerzielle oder "private" Images zu hosten, aber auch um den Overhead zu vermeiden, der mit dem Herunterladen von Images über das Internet einhergeht.
+
+### befehle
+
+docker run
+
+- Ist der Befehl zum Starten neuer Container.
+- Der bei weitem komplexesten Befehl, er unterstützt eine lange Liste möglicher Argumente.
+- Ermöglicht es dem Anwender, zu konfigurieren, wie das Image laufen soll, Dockerfile-Einstellungen zu überschreiben, Verbindungen zu konfigurieren und Berechtigungen und Ressourcen für den Container zu setzen.
+
+Standard-Test:
+```shell
+    $ docker run hello-world
+```
+Startet einen Container mit einer interaktiven Shell (interactive, tty):
+```shell
+    $ docker run -it ubuntu /bin/bash
+```
+Startet einen Container, der im Hintergrund (detach) läuft:
+```shell
+    $ docker run -d ubuntu sleep 20
+```
+Startet einen Container im Hintergrund und löscht (remove) diesen nach Beendigung des Jobs:
+```shell
+    $ docker run -d --rm ubuntu sleep 20
+```
+Startet einen Container im Hintergrund und legt eine Datei an:
+```shell
+    $ docker run -d ubuntu touch /tmp/lock
+```
+Startet einen Container im Hintergrund und gibt das ROOT-Verzeichnis (/) nach STDOUT aus:
+```shell
+    $ docker run -d ubuntu ls -l
+```
+docker ps
+
+- Gibt einen Überblick über die aktuellen Container, wie z.B. Namen, IDs und Status.
+
+Aktive Container anzeigen:
+```shell
+    $ docker ps
+```
+Aktive und beendete Container anzeigen (all):
+```shell
+    $ docker ps -a
+```
+Nur IDs ausgeben (all, quit):
+```shell
+    $ docker ps -a -q
+```
+docker images
+
+- Gibt eine Liste lokaler Images aus, wobei Informationen zu Repository-Namen, Tag-Namen und Grösse enthalten sind.
+
+Lokale Images ausgeben:
+```shell
+    $ docker images
+```
+Alternativ auch mit ... image ls:
+```shell
+    $ docker image ls
+```
+docker rm und docker rmi
+
+- docker rm
+  - Entfernt einen oder mehrere Container. Gibt die Namen oder IDs erfolgreich gelöschter Container zurück.
+- docker rmi
+  - Löscht das oder die angegebenen Images. Diese werden durch ihre ID oder Repository- und Tag-Namen spezifiziert.
+
+Docker Container löschen:
+```shell
+    $ docker rm [name]
+```
+Alle beendeten Container löschen:
+```shell
+    $ docker rm `docker ps -a -q`
+```
+Alle Container, auch aktive, löschen:
+```shell
+    $ docker rm -f `docker ps -a -q`
+```
+Docker Image löschen:
+```shell
+    $ docker rmi ubuntu
+```
+Zwischenimages löschen (haben keinen Namen):
+
+```shell
+    $ docker rmi `docker images -q -f dangling=true`
+```
+
+docker start
+
+- Startet einen (oder mehrere) gestoppte Container.
+  - Kann genutzt werden, um einen Container neu zu starten, der beendet wurde, oder um einen Container zu starten, der mit docker create erzeugt, aber nie gestartet wurde.
+
+Docker Container neu starten, die Daten bleiben erhalten:
+```shell
+    $ docker start [id]
+```
+Container stoppen, killen
+
+- docker stop
+  - Stoppt einen oder mehrere Container (ohne sie zu entfernen). Nach dem Aufruf von docker stop für einen Container wird er in den Status »exited« überführt.
+- docker kill
+  - Schickt ein Signal an den Hauptprozess (PID 1) in einem Container. Standardmässig wird SIGKILL gesendet, womit der Container sofort stoppt.
+
+Informationen zu Containern
+
+- docker logs
+  - Gibt die "Logs" für einen Container aus. Dabei handelt es sich einfach um alles, was innerhalb des Containers nach STDERR oder STDOUT geschrieben wurde.
+- docker inspect
+  - Gibt umfangreiche Informationen zu Containern oder Images aus. Dazu gehören die meisten Konfigurationsoptionen und Netzwerkeinstellungen sowie Volumes-Mappings.
+- docker diff
+  - Gibt die Änderungen am Dateisystem des Containers verglichen mit dem Image aus, aus dem er gestartet wurde.
+- docker top
+  - Gibt Informationen zu den laufenden Prozessen in einem angegebenen Container aus.
+
+### Dockerfile
+
+
 
 # 35 - Sicherheit 2
 Text
