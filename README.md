@@ -832,7 +832,7 @@ Setzt das Arbeitsverzeichnis für alle folgenden RUN-, CMD-, ENTRYPOINT-, ADD od
 Portweiterleitung
 
 ```shell
-$ docker run --rm -d -p <port>:</port> <image>
+$ docker run --rm -d -p <port>:<port> <image>
 ```
 
 Netzwerk anzeigen lassen
