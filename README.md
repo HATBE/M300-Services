@@ -854,7 +854,32 @@ $ ls -l ~/data/mysql
 ```
 
 # 35 - Sicherheit 2
-Text
+
+## Logging
+
+Json logging
+```shell
+$ docker run --name logtest ubuntu bash -c 'echo "stdout"; echo "stderr" >>2'
+```
+
+Syslog
+```shell
+$ docker run -d --log-driver=syslog ubuntu bash -c 'i=0; while true; do i=$((i+1)); echo "docker $i"; sleep 1; done;'
+$ tail -f /var/log/syslog
+```
+
+## Absichern
+User Setzen
+```shell
+RUN groupadd -r user_grp && useradd -r -g user_grp user
+USER user
+```
+
+Speicher begrenzen
+```shell
+RUN groupad
+docker run -m 128m --memory-swap 128m amouat/stress stress --vm 1 --vm-bytes 127m -t 5s
+```
 
 # 40 - Container-Orchestrierung
 Text
