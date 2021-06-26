@@ -292,6 +292,89 @@ Das Image sollte nun auf dem eigenen Profil zu sehen sein.
 
 ![img](images/LGCR653A.png)
 
+# 2 - Kubernetes
+## 2.1 - Installation
+
+Ich verwende hier ein Ubuntu Server 20.04 als Basis.
+
+```shell
+$ snap install microk8s --classic
+$ apt install docker.io
+```
+
+User berechtigen.
+
+```shell
+$ usermod -a -G microk8s <user>
+$ chown -f -R <user> ~/.kube
+```
+
+Zum starten, müssen noch einige module nachgeladen werden.
+
+```shell
+$ microk8s.enable dashboard dns ingress registry
+```
+
+## 2.2 - Befehle
+
+Um den Service zu starten.
+
+```shell
+$ microk8s.start
+```
+
+Um den Service zu stoppen.
+
+```shell
+$ microk8s.stop
+```
+
+Um den Status abzufragen.
+
+```shell
+$ microk8s.status
+```
+
+Um mit Kubectl zu interagieren.
+
+```shell
+$ microk8s.kubectl
+```
+
+## 2.3 - Dashboard
+
+Um das Dashboard zu aktivieren, muss folgendes getan werden.
+
+```shell
+$ microk8s dashboard-proxy # Erlaubt zugriff auf Dashboard
+```
+
+Jetzt kann über folgende url auf das Dashboard zugegriffen werden: __\<ip>:10443__.
+
+![img](images/LMH670GR.png)
+
+Nun muss der zuvor im Terminal angezeigte Token eingegeben werden.
+
+![img](images/GHZB7654.png)
+
+Nun ist man im Dashboard angekommen.
+
+![img](images/KM7890GT.png)
+
+## 2.4 - Simpler Container
+
+### 2.4.1 - Vorbereitung
+
+Als erstes sollte ein Verzeichnis erstellt werden.
+
+```shell
+$ mkdir ~/m300/webapp
+$ mkdir ~/m300/webapp/web
+$ cd ~/m300/webapp/
+```
+
+### 2.4.2 - Deployen
+Da wir ja im Kapitel 1.4 ja schon ein Docker image erstellt und auf Docker Hub hochgeladen haben, können wir dieses jetzt wiederverwenden.
 
 # 800 - Projekt
 ## 800.1 - Projekt Umfang
@@ -315,14 +398,13 @@ $ apt install docker.io
 ## 800.800 Testing
 # 900 - Reflexion
 
-Ich habe in diesem Modul das erste mal mit docker gerabeitet
+Ich habe in diesem Modul das erste mal mit docker und Kubernetes gearbeitet. Für die LB2 hatte ich leider nicht so viel zeit wie für die LB1, deshalb ist sie ein wenig kürzer ausgefallen, ich habe aber dennoch sehr viel dazugelernt, und hoffe das ich dieses Wissen auch noch in zukunft brauchen kann/werde.
 
 # 1000 - Quellen
 
 - MC-B github: https://github.com/mc-b/M300/tree/master [22.06.2021]
 - Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [22.06.2021]
-- Nextcloud über occ Installieren: https://docs.nextcloud.com/server/latest/admin_manual/installation/command_line_installation.html [22.06.21]
-- Netcloud occ: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html [22.06.21]
+- K8s: https://www.youtube.com/watch?v=wN6FlmPy2qA&list=WL&index=7&t=618s [26.06.2021]
 
 <br><br>
 
