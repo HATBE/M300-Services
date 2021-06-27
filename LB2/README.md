@@ -166,7 +166,7 @@ if(isset($_GET['num1']) && isset($_GET['num2'])) {
 }
 echo 'Welcome to Math!<br /><br />';
 echo 'We will add two numbers for you!<br />';
-echo 'Please enter two numbers in a GET Request, like: 10.10.200.236:8080/?num1=17&num2=18';
+echo "Please enter two numbers in a GET Request, like: {$_SERVER['HTTP_HOST']}/?num1=17&num2=18";
 echo '</div>';
 echo '</body>';
 echo '</html>';
@@ -368,13 +368,75 @@ Nun ist man im Dashboard angekommen.
 Als erstes sollte ein Verzeichnis erstellt werden.
 
 ```shell
-$ mkdir ~/m300/webapp
-$ mkdir ~/m300/webapp/web
-$ cd ~/m300/webapp/
+$ mkdir ~/m300/kubeconfigs/
+$ mkdir ~/m300/kubeconfigs/webapp/
+$ cd ~/m300/kubeconfigs/webapp/
 ```
 
-### 2.4.2 - Deployen
+### 2.4.2 - Deployment erstellen
 Da wir ja im Kapitel 1.4 ja schon ein Docker image erstellt und auf Docker Hub hochgeladen haben, können wir dieses jetzt wiederverwenden.
+
+In folgendem YAML file, wir ein Deployment erstellt, mit dem Namen webapp, und dem Image __"aarongen/webapp:1.0"__, das im Kapitel 1.4 erstellt wurde.
+nach den __---__, wird ein Service erstellt, mit dem Namen webapp-service, er hat den type (Loadbalancer (external)). der TCP port 30000 wird auf den port 80 weitergeleitet.
+
+```shell
+$ nano deployment.yaml
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: webapp
+   labels:
+      app: webapp
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: webapp
+   template:
+      metadata:
+         labels:
+            app: webapp
+      spec:
+         containers:
+         - name: webapp
+           image: aarongen/web:1.0
+           ports:
+           - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: webapp-service
+spec:
+   selector:
+      app: webapp
+   type: LoadBalancer
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+        nodePort: 30000
+
+```
+
+Um das Ganze jetzt zu deployen, kann folgender befehl ausgeführt werden.
+
+```shell
+$ microk8s.kubectl apply -f deployment.yaml
+```
+```text
+deployment.apps/webapp created
+service/webapp-service created
+```
+
+Nun ist die Website via Browser public erreichbar.
+
+![img](images/LK87654F.png)
+
+![img](images/98HJU6GT.png)
 
 # 800 - Projekt
 ## 800.1 - Projekt Umfang
