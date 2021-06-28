@@ -20,12 +20,6 @@ apt install docker.io
 ## 1.2 - Bedienung
 
 ```shell
-$ docker run <container>
-```
-
-Mit __docker run__ kann ein Container auf verschiedene art und weisen gestartet werden, je nach argument.
-
-```shell
 $ docker ps
 ```
 
@@ -35,7 +29,20 @@ __docker ps__ gibt eine Liste der aktuellen Container aus.
 $ docker images
 ```
 
-__docker images__ gibt eine Liste der aktuellen lokalen images aus.
+oder
+
+```shell
+$ docker image ls
+```
+
+__docker images__ oder __docker image ls__ gibt eine Liste der aktuellen lokalen images aus.
+
+
+```shell
+$ docker container ls
+```
+
+__docker container ls__ gibt eine aktuelle Liste aller container aus.
 
 ```shell
 $ docker [container/image] rm <container>
@@ -60,6 +67,38 @@ $ docker kill <container>
 ```
 
 Bei __docker kill__ wird der hauptprozess gekillt und der Container gestoppt.
+
+```shell
+$ docker image build -t <name>:<version> <path>
+```
+
+mit ___docker image build__ kann ein Image aus einem Dockerfile erstellt werden
+
+```shell
+$ docker image push <name>:<version>
+```
+
+Mit __docker image push__ kann ein Image auf dockerhub geladen und versioniert  werden.
+
+```shell
+$ docker container run --detach --name <name> -p <hostPort>:<guestPort> <image>:<version>
+```
+
+Mit dem obigen befehl, lässt sich ein Image in einem im hintergrund laufenden Container starten, dieser leitet den port 8080 auf den internen port 80 um.
+
+```shell
+$ docker pull <image>:<version>
+```
+
+Mit __docker pull__ kann ein Image von dockerhub heruntergeladen werden.
+
+```shell
+$ docker exec -d <containerName/ID> <shellCommand>
+```
+
+Mit __docker exec__ kann ein Befehl in einem container ausgeführt werden.
+
+
 
 ## 1.3 - Dockerfile
 Anweisungen
