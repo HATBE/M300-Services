@@ -23,6 +23,12 @@ apt install docker.io
 $ docker ps
 ```
 
+oder 
+
+```shell
+$ docker container ls
+```
+
 __docker ps__ gibt eine Liste der aktuellen Container aus.
 
 ```shell
@@ -39,13 +45,7 @@ __docker images__ oder __docker image ls__ gibt eine Liste der aktuellen lokalen
 
 
 ```shell
-$ docker container ls
-```
-
-__docker container ls__ gibt eine aktuelle Liste aller container aus.
-
-```shell
-$ docker [container/image] rm <container>
+$ docker [container/image] rm <container/image:version>
 ```
 
 Mit __docker rm__ können container und/oder Images gelöscht werden.
@@ -105,7 +105,7 @@ Anweisungen
 
 `FROM`
 
-Welches Base Image von hub.docker.com verwendet werden soll, z.B. ubuntu:16.04
+Base Image das verwerdet werden soll.
 
 `ADD`
 
@@ -162,21 +162,21 @@ Deklariert die angegebene Datei oder das Verzeichnis als Volume. Besteht die Dat
 
 Setzt das Arbeitsverzeichnis für alle folgenden RUN-, CMD-, ENTRYPOINT-, ADD oder COPY-Anweisungen.
 
-# 1.4 - PHP Webapp in Docker Container
+## 1.4 - PHP Webapp in Docker Container
 
 Um einen PHP / Apache2 Server in einem Container laufen zu lassen, muss folgendes gemacht werden.
 
-## 1.4.1 - Vorbereitung
+### 1.4.1 - Vorbereitung
 
 Als erstes sollte ein Verzeichnis erstellt werden.
 
 ```shell
-$ mkdir ~/m300/webapp
-$ mkdir ~/m300/webapp/web
+$ mkdir ~/m300/webapp/ # verzeichnis für Docker stuff
+$ mkdir ~/m300/webapp/web/ # verzeichnis für website
 $ cd ~/m300/webapp/
 ```
 
-Wenn das verzeichnis erstellt wurde, kann die "Webapplikation"/"Website" erstellt werden.
+Wenn das Verzeichnis erstellt wurde, kann die "Webapplikation"/"Website" erstellt werden.
 
 ```shell
 $ nano ~/m300/webapp/web/index.php
@@ -193,19 +193,19 @@ echo '<body>';
 echo '<div>';
 echo 'MATH!<br />';
 echo 'By Aaron Gensetter<br /><br /><br />';
-if(isset($_GET['num1']) && isset($_GET['num2'])) {
-    if(is_numeric($_GET['num1']) && is_numeric($_GET['num2'])) {
+if(isset($_GET['num1']) && isset($_GET['num2'])) { # check if num1 and num2 are set in the GET request
+    if(is_numeric($_GET['num1']) && is_numeric($_GET['num2'])) { # check if num1 and num2 are numbers
         
         $res = $_GET['num1'] + $_GET['num2'];
 
-        echo "The Result is: {$_GET['num1']} + {$_GET['num2']} = <b>{$res}</b>";
+        echo "The Result is: {$_GET['num1']} + {$_GET['num2']} = <b>{$res}</b>"; # output the result to the page
 
-        exit();
+        exit(); # then exit;
     }
 }
 echo 'Welcome to Math!<br /><br />';
 echo 'We will add two numbers for you!<br />';
-echo "Please enter two numbers in a GET Request, like: {$_SERVER['HTTP_HOST']}/?num1=17&num2=18";
+echo "Please enter two numbers in a GET Request, like: {$_SERVER['HTTP_HOST']}/?num1=17&num2=18"; # $_SERVER['HTTP_HOST'] == request Domain/ip + port
 echo '</div>';
 echo '</body>';
 echo '</html>';
@@ -236,9 +236,9 @@ body div {
 }
 ```
 
-## 1.4.2 - Image bauen
+### 1.4.2 - Image bauen
 
-Um nun ein Image zu bauen, muss ein __Dockerfile__ erstellt werden. Für unseren PHP / Apache2 Server, wird das Basis Image von PHP mit einem Apache Server genommen, namens: __php:apache__.
+Um nun ein Image zu bauen, muss ein __Dockerfile__ erstellt werden. Für den PHP / Apache2 Server, wird das Basis Image von PHP mit einem Apache Server genommen, namens: __php:apache__.
 
 ```shell
 $ nano Dockerfile
@@ -258,47 +258,8 @@ Image erstellen / builden.
 ```shell
 $ docker image build -t aarongen/web:1.0 .
 ```
-```text
-Sending build context to Docker daemon   5.12kB
-Step 1/6 : FROM php:apache
-apache: Pulling from library/php
-b4d181a07f80: Pull complete 
-78b85dd8f014: Pull complete 
-8589b26a90be: Pull complete 
-f5af5d641946: Pull complete 
-614ec6f0b8d6: Pull complete 
-12b28f3797fb: Pull complete 
-96bcb7d2e6b0: Pull complete 
-2b22e865defb: Pull complete 
-a11c288f9bbd: Pull complete 
-a7d336f7dd79: Pull complete 
-11caf1780a9a: Pull complete 
-cf16e972ea50: Pull complete 
-b6621f6d9a60: Pull complete 
-Digest: sha256:9c290f78c7c9e14fb081fe49ce1345c7d6b3a577f0ab829fec9ca8a30677d3ef
-Status: Downloaded newer image for php:apache
- ---> 88b1572dce2d
-Step 2/6 : LABEL MAINTAINER=aaron.gensetter@edu.tbz.ch
- ---> Running in 06a4ecea5aa4
-Removing intermediate container 06a4ecea5aa4
- ---> c6509da1d3d4
-Step 3/6 : WORKDIR /var/www/html
- ---> Running in 3772e4076cde
-Removing intermediate container 3772e4076cde
- ---> fd8fa03d64a6
-Step 4/6 : COPY ./web/index.php index.php
- ---> c110ad225360
-Step 5/6 : COPY ./web/style.css style.css
- ---> 2f72011b4125
-Step 6/6 : EXPOSE 80
- ---> Running in a6d80f9f1cea
-Removing intermediate container a6d80f9f1cea
- ---> 52661fc88775
-Successfully built 52661fc88775
-Successfully tagged aarongen/web:1.0
-```
 
-## 1.4.3 - Testen
+### 1.4.3 - Testen
 
 Um nun das gerade gebaute Image zu testen, kann es mit dem __docker container run__ Befehl gestartet werden.\
 Es werden noch die zusatzoptionen __--detach__ (startet im Hintergrund), __--name__ (Gibt dem Container einen Namen) und __-p__ (leitet den port 8080 auf den Guestport 80 um) verwendet.
@@ -317,10 +278,10 @@ Wenn nun der Anleitung folge geleistet wird, und beide Nummern eingetragen werde
 
 ## 1.4.4 - Docker Hub
 
-Um das Image in ein Repository auf Docker Hub zu laden, muss man sich erst mitseiner Docker Hub ID anmelden, danach kann das Image gepusht werden.
+Um das Image in ein Repository auf Docker Hub zu laden, muss man sich erst mit seiner Docker Hub ID anmelden, danach kann das Image gepusht werden.
 
 ```shell
-$ docker login --username=aarongen
+$ docker login -u aarongen -p <password>
 ```
 
 ```shell
@@ -377,8 +338,48 @@ $ microk8s.status
 Um mit Kubectl zu interagieren.
 
 ```shell
-$ microk8s.kubectl
+$ microk8s.kubectl <command>
 ```
+
+Um details einer ressouce zu erhalten.
+
+```shell
+$ microk8s.kubectl describe <resource>
+```
+
+um die Logs eines pods anzuzeigen
+
+```shell
+$ microk8s.kubectl logs <pod>
+```
+
+Um einen Bashbefehl in einem pod auszuführen.
+
+```shell
+$ microk8s.kubectl exec <pod> <command>
+```
+
+Um ein YAML file zu applyen
+
+```shell
+$ microk8s.kubectl apply -f
+```
+
+Um informationen zu sammeln über...
+
+```shell
+$ microk8s.kubectl get services # alle Services anzeigen
+$ microk8s.kubectl get pods # alle pods anzeigen
+$ microk8s.kubectl get deployments # alle deployments anzeigen lassen
+$ microk8s.kubectl get all # alles anzeigen
+```
+
+Um ... zu löschen.
+
+```shell
+$ microk8s.kubectl delete [service/pod/deployment] <name/id>
+```
+
 
 ## 2.3 - Dashboard
 
