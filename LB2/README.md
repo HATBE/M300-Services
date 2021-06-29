@@ -596,10 +596,11 @@ EOF
 $ sudo systemctl daemon-reload 
 $ sudo systemctl restart docker
 $ sudo systemctl enable docker
-
 ```
 
-Master node
+Jetzt kann die Masternode Konfiguriert werden.
+
+** **auf dem MASTER ausführen**
 
 ```shell
 $ sudo systemctl enable kubelet
@@ -613,8 +614,12 @@ $ sudo kubeadm config images pull
 $ sudo nano /etc/hosts
 ```
 
+In diesem File müssen alle worker und der cluster an sich hinzugefügt werden.
+
 ```text
 10.10.200.130 cluster.kubecluster.local
+10.10.200.131 worker1.kubecluster.local
+10.10.200.132 worker2.kubecluster.local
 ```
 
 ```shell
@@ -622,6 +627,8 @@ $ sudo kubeadm init \
 --pod-network-cidr=192.168.0.0/16 \
 --control-plane-endpoint=cluster.kubecluster.local
 ```
+
+* Wenn 192.168.0.0/16 schon in deinem Netzwerk erwendet wird, bitte ein anderes privates Netzwerk nehmen....
 
 ```shell
 $ mkdir -p $HOME/.kube
@@ -643,12 +650,13 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 Worker Nodes hinzufügen
 
-** **auf den Nodes ausführen**
+** **auf den Worker Nodes ausführen**
+
 ```shell
 $ sudo nano /etc/hosts
 ```
 
-```shell
+```text
 10.10.200.130 cluster.kubecluster.local
 ```
 
@@ -659,7 +667,7 @@ $ kubeadm token create --print-join-command
 
 ![img](images/9876GTF5.png)
 
-** **auf den Nodes ausführen**
+** **auf den Worker Nodes ausführen**
 
 ```shell
 $ kubeadm join cluster.kubecluster.local:6443 --token <token> --discovery-token-ca-cert-hash <sha>
@@ -676,9 +684,9 @@ $ kubectl get nodes -o wide
 
 ### 2.5.3 - Testen
 
-Um den Loadbalancer zu testen, und somit das verteilen auf verschiedene Nodes, habe ich eine kleine "Applikation" und ein dazu passendes script erstellt.
+Um den Loadbalancer zu testen, und somit das verteilen auf verschiedene Nodes, wurde eine kleine "Applikation" und ein dazu passendes script erstellt.
 
-Hier erstelle ich das php script, das ausliest wie der Hostname und die Interne von docker/kubernetes erteilte IP ist.
+Hier wird ein php script erstellt, das ausliest wie der Hostname und die Interne von docker/kubernetes erteilte IP ist.
 
 ```shell
 $ nano index.php
@@ -689,7 +697,7 @@ $ nano index.php
 echo "ip= ".$_SERVER['SERVER_ADDR']." Hostname= ".gethostname();
 ```
 
-Um das ganze in Kubernetes zu deployen, habe ich ein Docker Image erstellt.
+Um das ganze in Kubernetes zu deployen, wurde ein Docker Image erstellt.
 
 ```shell
 $ nano Dockerfile
@@ -707,14 +715,14 @@ EXPOSE 80
 $ docker image build -t aarongen/test:1.0 .
 ```
 
-Dieses Image habe ich dann auf Dockerhub gepusht.
+Dieses Image wurde dann auf Dockerhub gepusht.
 
 ```shell
 $ docker image push aarongen/test:1.0
 ```
 
-Ich habe auf den Kubernetes Master ein manifest.yaml erstellt.\
-Für diesen Test habe ich mal 6 replicas erstellt.
+Dann wurde auf dem Kubernetes Master ein __manifest.yaml__ erstellt.\
+Für diesen Test werden 6 replicas erstellt.
 
 ```shell
 $ nano manifest.yaml
@@ -758,7 +766,7 @@ spec:
         nodePort: 30001
 ```
 
-Das Manifest habe ich dann angewendet.
+Dann wurde das Manifest applyed.
 
 ```shell
 $ kubectl apply -f manifest.yaml
@@ -776,13 +784,13 @@ Die Website kann nun über den spezifizierten port __30001__ aufgerufen werden.
 
 ![img](images/JUHBG56F.png)
 
-Um verschiedene aufrufe automatisch zu simulieren, habe ich ein kleines Tool geschrieben.
+Um verschiedene aufrufe automatisch zu simulieren, wurde ein kleines Tool geschrieben.
 
 ```shell
 $ nano curl.sh
 ```
 
-Dieses Tool macht Zehn anfragen und notoert sich die IP Adresse und den Hostnamen des aktuellen pods, so kann der Loadbalancer ausgetestet werden.
+Dieses Tool macht Zehn anfragen und loggt die IP Adresse und den Hostnamen des aktuellen pods, so kann der Loadbalancer getestet werden.
 
 ```shell
 rm ./curl.log
