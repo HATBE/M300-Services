@@ -26,7 +26,8 @@
     - [2.4.2 - Deployment erstellen](#242---deployment-erstellen)
   - [2.5 - Cluster Installieren](#25---cluster-installieren)
     - [2.5.1 - Vorbereiten](#251---vorbereiten)
-    - [2.5.1 - Installation](#251---installation)
+    - [2.5.2 - Installation](#252---installation)
+    - [2.5.3 - Testen](#253---testen)
 - [800 - Projekt](#800---projekt)
   - [800.1 - Projekt Umfang](#8001---projekt-umfang)
     - [Ziele:](#ziele)
@@ -527,7 +528,7 @@ $ sudo apt update
 $ sudo apt -y upgrade && sudo systemctl reboot
 ```
 
-### 2.5.1 - Installation
+### 2.5.2 - Installation
 
 Als erstes muss auf allen Servern "kubelet, kubeadm and kubectl" installiert werden.
 
@@ -664,10 +665,152 @@ $ kubeadm token create --print-join-command
 $ kubeadm join cluster.kubecluster.local:6443 --token <token> --discovery-token-ca-cert-hash <sha>
 ```
 
+** **auf dem MASTER ausführen**
 
 
+```shell
+$ kubectl get nodes -o wide
+```
 
+![img](images/78KJHB6F.png)
 
+### 2.5.3 - Testen
+
+Um den Loadbalancer zu testen, und somit das verteilen auf verschiedene Nodes, habe ich eine kleine "Applikation" und ein dazu passendes script erstellt.
+
+Hier erstelle ich das php script, das ausliest wie der Hostname und die Interne von docker/kubernetes erteilte IP ist.
+
+```shell
+$ nano index.php
+```
+
+```php
+<?php
+echo "ip= ".$_SERVER['SERVER_ADDR']." Hostname= ".gethostname();
+```
+
+Um das ganze in Kubernetes zu deployen, habe ich ein Docker Image erstellt.
+
+```shell
+$ nano Dockerfile
+```
+
+```text
+FROM php:apache
+LABEL MAINTAINER=aaron.gensetter@edu.tbz.ch
+WORKDIR /var/www/html
+COPY ./index.php index.php
+EXPOSE 80
+```
+
+```shell
+$ docker image build -t aarongen/test:1.0 .
+```
+
+Dieses Image habe ich dann auf Dockerhub gepusht.
+
+```shell
+$ docker image push aarongen/test:1.0
+```
+
+Ich habe auf den Kubernetes Master ein manifest.yaml erstellt.\
+Für diesen Test habe ich mal 6 replicas erstellt.
+
+```shell
+$ nano manifest.yaml
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: test
+   labels:
+      app: test
+spec:
+   replicas: 6
+   selector:
+      matchLabels:
+         app: test
+   template:
+      metadata:
+         labels:
+            app: test
+      spec:
+         containers:
+         - name: test
+           image: aarongen/test:1.0
+           ports:
+           - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: test-service
+spec:
+   selector:
+      app: test  
+   type: LoadBalancer
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+        nodePort: 30001
+```
+
+Das Manifest habe ich dann angewendet.
+
+```shell
+$ kubectl apply -f manifest.yaml
+```
+
+Wenn man dann auf die Verteilung schaut, siet man, dass sich die Pods schön auf die Worker nodes verteilen.
+
+```shell
+$ kubectl get pods -o wide
+```
+
+![img](images/9876GTBV.png)
+
+Die Website kann nun über den spezifizierten port __30001__ aufgerufen werden.
+
+![img](images/JUHBG56F.png)
+
+Um verschiedene aufrufe automatisch zu simulieren, habe ich ein kleines Tool geschrieben.
+
+```shell
+$ nano curl.sh
+```
+
+Dieses Tool macht Zehn anfragen und notoert sich die IP Adresse und den Hostnamen des aktuellen pods, so kann der Loadbalancer ausgetestet werden.
+
+```shell
+rm ./curl.log
+for x in {1..10}; do
+  LOG=$(curl 10.10.200.130:30001)
+  echo -e $LOG >> curl.log
+done
+```
+
+```shell
+$ chmod +x curl.sh
+```
+
+Wenn das Script nun ausgeführt wird, wird der Output in das file __curl.log__ gespeichert.
+
+```shell
+$ ./curl.sh
+```
+
+Wenn dieses curl.log file nun ausgelesen wird, kann folgendes beobachtet werden.
+
+```shell
+$ cat curl.log
+```
+
+Es ist schön zu sehen, wie verschiedene pods verwendet werden, sogar von verschiedenen workern, diese können mit der abbildung oben verglichen werden.
+
+![img](images/KMNHGR65.png)
 
 # 800 - Projekt
 ## 800.1 - Projekt Umfang
@@ -686,7 +829,6 @@ Als erstes habe ich einen einfachen Ubuntu Server 20.04 in meiner DMZ erstellt.
 $ apt install docker.io # Docker Installieren
 $ snap install microk8s --classic # Kubernetes Installieren
 ```
-
 ## 800.3 - Dockerfile
 
 
