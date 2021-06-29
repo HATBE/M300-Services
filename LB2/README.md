@@ -6,6 +6,37 @@
 
 # Inhalt
 
+- [Inhalt](#inhalt)
+- [Einleitung](#einleitung)
+- [1 - Docker](#1---docker)
+  - [1.1 - Installation](#11---installation)
+  - [1.2 - Bedienung](#12---bedienung)
+  - [1.3 - Dockerfile](#13---dockerfile)
+  - [1.4 - PHP Webapp in Docker Container](#14---php-webapp-in-docker-container)
+    - [1.4.1 - Vorbereitung](#141---vorbereitung)
+    - [1.4.2 - Image bauen](#142---image-bauen)
+    - [1.4.3 - Testen](#143---testen)
+    - [1.4.4 - Docker Hub](#144---docker-hub)
+- [2 - Kubernetes](#2---kubernetes)
+  - [2.1 - Installation](#21---installation)
+  - [2.2 - Befehle](#22---befehle)
+  - [2.3 - Dashboard](#23---dashboard)
+  - [2.4 - Simpler Container](#24---simpler-container)
+    - [2.4.1 - Vorbereitung](#241---vorbereitung)
+    - [2.4.2 - Deployment erstellen](#242---deployment-erstellen)
+  - [2.5 - Cluster Installieren](#25---cluster-installieren)
+    - [2.5.1 - Vorbereiten](#251---vorbereiten)
+    - [2.5.1 - Installation](#251---installation)
+- [800 - Projekt](#800---projekt)
+  - [800.1 - Projekt Umfang](#8001---projekt-umfang)
+    - [Ziele:](#ziele)
+  - [800.2 - Umgebung vorbereiten](#8002---umgebung-vorbereiten)
+    - [800.2.1 - Server](#80021---server)
+  - [800.3 - Dockerfile](#8003---dockerfile)
+  - [800.800 Testing](#800800-testing)
+- [900 - Reflexion](#900---reflexion)
+- [1000 - Quellen](#1000---quellen)
+
 # Einleitung
 Für die LB1 vom Modul 300 habe ich mich für ein Projekt entschieden dass in Kapitel __make link__ weiter beschrieben wird.
 
@@ -276,7 +307,7 @@ Wenn nun der Anleitung folge geleistet wird, und beide Nummern eingetragen werde
 
 ![img](images/LKJUH67G.png)
 
-## 1.4.4 - Docker Hub
+### 1.4.4 - Docker Hub
 
 Um das Image in ein Repository auf Docker Hub zu laden, muss man sich erst mit seiner Docker Hub ID anmelden, danach kann das Image gepusht werden.
 
@@ -380,7 +411,6 @@ Um ... zu löschen.
 $ microk8s.kubectl delete [service/pod/deployment] <name/id>
 ```
 
-
 ## 2.3 - Dashboard
 
 Um das Dashboard zu aktivieren, muss folgendes getan werden.
@@ -472,11 +502,172 @@ deployment.apps/webapp created
 service/webapp-service created
 ```
 
-Nun ist die Website via Browser public erreichbar.
+Nun ist die Website via Browser "public" erreichbar.
 
 ![img](images/LK87654F.png)
 
 ![img](images/98HJU6GT.png)
+
+## 2.5 - Cluster Installieren
+
+### 2.5.1 - Vorbereiten
+
+Als erster habe ich drei VMs auf meinem Proxmox Server erstellt.
+
+| Type | OS | Hostname | IP |
+| --- | --- | --- | --- |
+| Master | ubuntu-server 20.04 | master.kubecluster.local | 10.10.200.130 |
+| Worker | ubuntu-server 20.04 | worker1.kubecluster.local | 10.10.200.131 |
+| Worker | ubuntu-server 20.04 | worker2.kubecluster.local | 10.10.200.132 |
+
+Das erste was gemacht werden sollte, ist die Server zu updaten.
+
+```shell
+$ sudo apt update
+$ sudo apt -y upgrade && sudo systemctl reboot
+```
+
+### 2.5.1 - Installation
+
+Als erstes muss auf allen Servern "kubelet, kubeadm and kubectl" installiert werden.
+
+Repos hinzufügen.
+
+```shell
+$ sudo apt -y install curl apt-transport-https
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+$ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+
+Packages Installieren.
+
+```shell
+$ sudo apt update
+$ sudo apt -y install vim git curl wget kubelet kubeadm kubectl
+$ sudo apt-mark hold kubelet kubeadm kubectl
+```
+
+Swap Deaktvieren.
+
+```shell
+$ sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+$ sudo swapoff -a
+```
+
+sysctl Konfigurieren.
+
+```shell
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+sudo tee /etc/sysctl.d/kubernetes.conf<<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+```
+
+Docker runtime.
+
+```shell
+$ sudo apt update
+$ sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | $ sudo apt-key add -
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+$ sudo apt update
+$ sudo apt install -y containerd.io docker-ce docker-ce-cli
+
+$ sudo mkdir -p /etc/systemd/system/docker.service.d
+
+$ sudo tee /etc/docker/daemon.json <<EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+$ sudo systemctl daemon-reload 
+$ sudo systemctl restart docker
+$ sudo systemctl enable docker
+
+```
+
+Master node
+
+```shell
+$ sudo systemctl enable kubelet
+```
+
+```shell
+$ sudo kubeadm config images pull
+```
+
+```shell
+$ sudo nano /etc/hosts
+```
+
+```text
+10.10.200.130 cluster.kubecluster.local
+```
+
+```shell
+$ sudo kubeadm init \
+--pod-network-cidr=192.168.0.0/16 \
+--control-plane-endpoint=cluster.kubecluster.local
+```
+
+```shell
+$ mkdir -p $HOME/.kube
+$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+```shell
+$ kubectl cluster-info
+```
+
+![img](images/HBG654FR.png)
+
+Network on Master.
+
+```shell
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+Worker Nodes hinzufügen
+
+** **auf den Nodes ausführen**
+```shell
+$ sudo nano /etc/hosts
+```
+
+```shell
+10.10.200.130 cluster.kubecluster.local
+```
+
+** **auf dem MASTER ausführen**
+```shell
+$ kubeadm token create --print-join-command
+```
+
+![img](images/9876GTF5.png)
+
+** **auf den Nodes ausführen**
+
+```shell
+$ kubeadm join cluster.kubecluster.local:6443 --token <token> --discovery-token-ca-cert-hash <sha>
+```
+
+
+
+
+
 
 # 800 - Projekt
 ## 800.1 - Projekt Umfang
@@ -487,10 +678,13 @@ xxxx
 
 ## 800.2 - Umgebung vorbereiten
 ### 800.2.1 - Server
-Für dieses Projekt werde ich nicht auf die TBZ Cloud setzen, sondern eine eigene VM auf meinem Proxmox Server installieren, auf dieser werden alle docker Container ausgeführt.
+Für dieses Projekt werde ich __nicht__ auf die TBZ Cloud setzen, sondern eine eigene VM auf meinem Proxmox Server installieren.
+
+Als erstes habe ich einen einfachen Ubuntu Server 20.04 in meiner DMZ erstellt.
 
 ```shell
-$ apt install docker.io
+$ apt install docker.io # Docker Installieren
+$ snap install microk8s --classic # Kubernetes Installieren
 ```
 
 ## 800.3 - Dockerfile
@@ -507,6 +701,7 @@ Ich habe in diesem Modul das erste mal mit docker und Kubernetes gearbeitet. Fü
 - MC-B github: https://github.com/mc-b/M300/tree/master [22.06.2021]
 - Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [22.06.2021]
 - K8s: https://www.youtube.com/watch?v=wN6FlmPy2qA&list=WL&index=7&t=618s [26.06.2021]
+- k8s Cluster: https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/ [28.06.2021]
 
 <br><br>
 
