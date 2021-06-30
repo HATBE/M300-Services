@@ -28,15 +28,8 @@
     - [2.5.1 - Vorbereiten](#251---vorbereiten)
     - [2.5.2 - Installation](#252---installation)
     - [2.5.3 - Testen](#253---testen)
-- [800 - Projekt](#800---projekt)
-  - [800.1 - Projekt Umfang](#8001---projekt-umfang)
-    - [Ziele:](#ziele)
-  - [800.2 - Umgebung vorbereiten](#8002---umgebung-vorbereiten)
-    - [800.2.1 - Server](#80021---server)
-  - [800.3 - Dockerfile](#8003---dockerfile)
-  - [800.800 Testing](#800800-testing)
-- [900 - Reflexion](#900---reflexion)
-- [1000 - Quellen](#1000---quellen)
+- [3 - Reflexion](#3---reflexion)
+- [4 - Quellen](#4---quellen)
 
 # Einleitung
 Für die LB1 vom Modul 300 habe ich mich für ein Projekt entschieden dass in Kapitel __make link__ weiter beschrieben wird.
@@ -129,8 +122,6 @@ $ docker exec -d <containerName/ID> <shellCommand>
 ```
 
 Mit __docker exec__ kann ein Befehl in einem container ausgeführt werden.
-
-
 
 ## 1.3 - Dockerfile
 Anweisungen
@@ -820,33 +811,12 @@ Es ist schön zu sehen, wie verschiedene pods verwendet werden, sogar von versch
 
 ![img](images/KMNHGR65.png)
 
-# 800 - Projekt
-## 800.1 - Projekt Umfang
-xxxxx
 
-### Ziele:
-xxxx
-
-## 800.2 - Umgebung vorbereiten
-### 800.2.1 - Server
-Für dieses Projekt werde ich __nicht__ auf die TBZ Cloud setzen, sondern eine eigene VM auf meinem Proxmox Server installieren.
-
-Als erstes habe ich einen einfachen Ubuntu Server 20.04 in meiner DMZ erstellt.
-
-```shell
-$ apt install docker.io # Docker Installieren
-$ snap install microk8s --classic # Kubernetes Installieren
-```
-## 800.3 - Dockerfile
-
-
-
-## 800.800 Testing
-# 900 - Reflexion
+# 3 - Reflexion
 
 Ich habe in diesem Modul das erste mal mit docker und Kubernetes gearbeitet. Für die LB2 hatte ich leider nicht so viel zeit wie für die LB1, deshalb ist sie ein wenig kürzer ausgefallen, ich habe aber dennoch sehr viel dazugelernt, und hoffe das ich dieses Wissen auch noch in zukunft brauchen kann/werde.
 
-# 1000 - Quellen
+# 4 - Quellen
 
 - MC-B github: https://github.com/mc-b/M300/tree/master [22.06.2021]
 - Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [22.06.2021]

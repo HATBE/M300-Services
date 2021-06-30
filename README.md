@@ -882,17 +882,49 @@ docker run -m 128m --memory-swap 128m amouat/stress stress --vm 1 --vm-bytes 127
 ```
 
 # 40 - Container-Orchestrierung
-Text
 
-# 50 - Add-ons
-Eigene Ergänzungen erwünscht
+__Load Balancing__
 
-# 60 - Reflexion
+Mittels Lastverteilung (englisch Load Balancing) werden in der Informatik umfangreiche Berechnungen oder große Mengen von Anfragen auf mehrere parallel arbeitende Systeme verteilt.
 
-20.05.21
-Ich habe mich in diesem Modul das erste mal mit Vagrant auseinander Gesetzt und vieles darüber gelernt
+Insbesondere bei Webservern ist eine Lastverteilung wichtig, da ein einzelner Host nur eine begrenzte Menge an HTTP-Anfragen auf einmal beantworten kann.
 
-# 70 - Quellen
+Für unsere Zwecke kann Lastverteilung als der Prozess des Verteilens von Anfragen auf verschiedene Container betrachtet werden.
+
+__Cluster__
+
+## Kubernetes
+
+    Immutable (Unveränderlich) statt Mutable.
+    Deklarative statt Imperative (Ausführen von Anweisungen) Konfiguration.
+    Selbstheilende Systeme - Neustart bei Absturz.
+    Entkoppelte APIs – LoadBalancer / Ingress (Reverse Proxy).
+    Skalieren der Services durch Änderung der Deklaration.
+    Anwendungsorientiertes statt Technik (z.B. Route 53 bis AWS) Denken.
+    Abstraktion der Infrastruktur statt in Rechnern Denken.
+
+
+Pod - Ein Pod repräsentiert eine Gruppe von Anwendungs-Containern und Volumes, die in der gleichen Ausführungsumgebung (gleiche IP, Node) laufen.
+
+ReplicaSet: ReplicaSets bestimmen wieviele Exemplare eines Pods laufen und stellen sicher, dass die angeforderte Menge auch verfügbar ist.
+
+Deployment: Deployments erweitern ReplicaSets um deklarative Updates (z.B. von Version 1.0 auf 1.1) von Container Images.
+
+Service: Ein Service steuert den Zugriff auf einen Pod (IP-Adresse, Port). Während Pods (bzw. Images) ersetzt werden können (z.B. durch Update auf neue Version) bleibt ein Service stabil.
+
+Ingress: Ähnlich einem Reverse Proxy ermöglicht ein Ingress den Zugriff auf einen Service über einen URL.
+
+
+Ein Rechnerverbund oder Computercluster, meist einfach Cluster genannt (vom Englischen für „Rechner-Schwarm“, „-Gruppe“ oder „-Haufen“), bezeichnet eine Anzahl von vernetzten Computern.
+
+Der Begriff wird zusammenfassend für zwei unterschiedliche Aufgaben verwendet:
+
+    die Erhöhung der Rechenkapazität (HPC-Cluster)
+    die Erhöhung der Verfügbarkeit (HA-Cluster, engl. high available - hochverfügbar).
+
+Die in einem Cluster befindlichen Computer (auch Knoten, vom englischen nodes oder Server) werden auch oft als Serverfarm bezeichnet.
+
+# 50 - Quellen
 
 Aufgaben und einige Texte: https://github.com/mc-b/M300/tree/master
 - - -
