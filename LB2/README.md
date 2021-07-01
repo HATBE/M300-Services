@@ -28,11 +28,12 @@
     - [2.5.1 - Vorbereiten](#251---vorbereiten)
     - [2.5.2 - Installation](#252---installation)
     - [2.5.3 - Testen](#253---testen)
+    - [2.5.4 - Nextcloud](#254---nextcloud)
 - [3 - Reflexion](#3---reflexion)
 - [4 - Quellen](#4---quellen)
 
 # Einleitung
-Für die LB1 vom Modul 300 habe ich mich für ein Projekt entschieden dass in Kapitel __make link__ weiter beschrieben wird.
+Für die LB2 vom Modul 300 habe ich mich gegen die MAAS umgebung der TBZ entschieden, ich werde alle Server auf einem eigenen Proxmox Server aufsetzen, dies, weil ich selber die Freiheit über die Spezifikationen und vernetzung haben will.
 
 Da ich auf einem Ubuntu 20.04 arbeite, werde ich nur die Installations- und Konfigurationsmethoden dafür erklären.
 
@@ -512,6 +513,12 @@ Als erster habe ich drei VMs auf meinem Proxmox Server erstellt.
 | Worker | ubuntu-server 20.04 | worker1.kubecluster.local | 10.10.200.131 |
 | Worker | ubuntu-server 20.04 | worker2.kubecluster.local | 10.10.200.132 |
 
+Diese habe ich auf meinem Proxmox Server Installiert.
+
+Die VMs haben alle 3GB RAM, 2 Cores und 20GB SSD Speicher.
+
+![img](images/KMJ76543.png)
+
 Das erste was gemacht werden sollte, ist die Server zu updaten.
 
 ```shell
@@ -561,7 +568,8 @@ EOF
 sudo sysctl --system
 ```
 
-Docker runtime.
+Es gibt drei möglichkeiten um container auf einem Kubernetes Cluster laufen zu lassen, __Docker__, __CRI-O__ und __Containerd__.\
+Ich habe mich für die __Docker__ runtime entschieden.
 
 ```shell
 $ sudo apt update
@@ -591,7 +599,7 @@ $ sudo systemctl enable docker
 
 Jetzt kann die Masternode Konfiguriert werden.
 
-** **auf dem MASTER ausführen**
+** **nur auf dem MASTER ausführen**
 
 ```shell
 $ sudo systemctl enable kubelet
@@ -619,7 +627,7 @@ $ sudo kubeadm init \
 --control-plane-endpoint=cluster.kubecluster.local
 ```
 
-* Wenn 192.168.0.0/16 schon in deinem Netzwerk erwendet wird, bitte ein anderes privates Netzwerk nehmen....
+\* Wenn 192.168.0.0/16 schon in deinem Netzwerk erwendet wird, bitte ein anderes privates Netzwerk nehmen....
 
 ```shell
 $ mkdir -p $HOME/.kube
@@ -641,7 +649,7 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 Worker Nodes hinzufügen
 
-** **auf den Worker Nodes ausführen**
+** **nur auf den Worker Nodes ausführen**
 
 ```shell
 $ sudo nano /etc/hosts
@@ -651,14 +659,14 @@ $ sudo nano /etc/hosts
 10.10.200.130 cluster.kubecluster.local
 ```
 
-** **auf dem MASTER ausführen**
+** **nur auf dem MASTER ausführen**
 ```shell
 $ kubeadm token create --print-join-command
 ```
 
 ![img](images/9876GTF5.png)
 
-** **auf den Worker Nodes ausführen**
+** **nur auf den Worker Nodes ausführen**
 
 ```shell
 $ kubeadm join cluster.kubecluster.local:6443 --token <token> --discovery-token-ca-cert-hash <sha>
@@ -811,6 +819,157 @@ Es ist schön zu sehen, wie verschiedene pods verwendet werden, sogar von versch
 
 ![img](images/KMNHGR65.png)
 
+### 2.5.4 - Nextcloud
+
+Um Jetzt zum Abschluss noch eine Applikation mit einer Datenbank als backend zu zeigen, habe ich mich für eine Nextcloud entschieden.
+
+Um die Passwärter und Usernamen im geheimen zu halten, habe ich mich dafür entschieden ein Secret zu erstellen 
+Als erstes müssen die geplantent Werte in Base64 umgewandelt werden, dies kann folgendermassen geschehen.
+
+```shell
+$ echo -n 'admin' | base64
+
+output: YWRtaW4=
+```
+
+```shell
+$ echo -n 'Password1' | base64
+
+output: UGFzc3dvcmQx
+```
+
+Jetzt kann das secret erstellt werden.
+
+```shell
+$ nano secret.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nextcloud-secret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: UGFzc3dvcmQx
+```
+
+```shell
+$ kubectl apply -f secret.yaml
+```
+
+Nun können wir das Manifest erstellen.\
+In diesem Manifest, wird zuerst ein Persistent Voume für die Daten der Nextcloud erstellt, danach wird der Storage geclaimt. Als drittes, wird ein Service für die Nextcloud erstellt, so dass sie auch von aussen erreichbar ist, durch den port __30003__. Das letzte ist nun das Deployment, hier kommt auch das Secret zum einsatz.
+
+```shell
+$ nano manifest.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nextcloud-shared-storage
+  labels:
+    type: local
+spec:
+  storageClassName: ncloud
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/nextcloud/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-shared-storage-claim
+  labels:
+    app: nextcloud
+spec:
+  storageClassName: ncloud
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30003
+  selector:
+    app: nextcloud
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+spec:
+  selector:
+    matchLabels:
+      app: nextcloud
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+      - image: nextcloud:latest
+        name: nextcloud
+        env:
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secret
+              key: username
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secret
+              key: password
+        ports:
+        - containerPort: 80
+          name: nextcloud
+        volumeMounts:
+        - name: nextcloud-data
+          mountPath: /var/www/html
+      volumes:
+      - name: nextcloud-data
+        persistentVolumeClaim:
+          claimName: nextcloud-shared-storage-claim 
+```
+
+Wenn alles richtig eingetragen ist, können wir die nextcloud auch schon starten.
+
+```shell
+$ kubectl apply -f manifest.yaml
+```
+
+```shell
+$ kubectl get all
+```
+
+![img](images/8JHZTG6F.png)
+
+Die Nextcloud ist jetzt unter dem Port __30003__ erreichbar.
+
+
+![img](images/LKIJ7865.png)
+
+Die Logindaten, sind die, die im secret definiert sind.
+
+![img](images/ZTGRFT56.png)
 
 # 3 - Reflexion
 
@@ -822,6 +981,7 @@ Ich habe in diesem Modul das erste mal mit docker und Kubernetes gearbeitet. Fü
 - Inhaltsverzeichnis: https://ecotrust-canada.github.io/markdown-toc/ [22.06.2021]
 - K8s: https://www.youtube.com/watch?v=wN6FlmPy2qA&list=WL&index=7&t=618s [26.06.2021]
 - k8s Cluster: https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/ [28.06.2021]
+- Nextcloud Docker: https://hub.docker.com/_/nextcloud [01.07.2021]
 
 <br><br>
 
