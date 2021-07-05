@@ -98,7 +98,7 @@ Bei __docker kill__ wird der hauptprozess gekillt und der Container gestoppt.
 $ docker image build -t <name>:<version> <path>
 ```
 
-mit ___docker image build__ kann ein Image aus einem Dockerfile erstellt werden
+mit __docker image build__ kann ein Image aus einem Dockerfile erstellt werden
 
 ```shell
 $ docker image push <name>:<version>
@@ -371,6 +371,11 @@ Um details einer ressouce zu erhalten.
 $ microk8s.kubectl describe <resource>
 ```
 
+Um die Config anzuzeigen
+```shell
+$ mcrok8s.kubectl config view
+```
+
 um die Logs eines pods anzuzeigen
 
 ```shell
@@ -386,7 +391,7 @@ $ microk8s.kubectl exec <pod> <command>
 Um ein YAML file zu applyen
 
 ```shell
-$ microk8s.kubectl apply -f
+$ microk8s.kubectl apply -f <file>
 ```
 
 Um informationen zu sammeln über...
@@ -395,13 +400,14 @@ Um informationen zu sammeln über...
 $ microk8s.kubectl get services # alle Services anzeigen
 $ microk8s.kubectl get pods # alle pods anzeigen
 $ microk8s.kubectl get deployments # alle deployments anzeigen lassen
+$ microk8s.kubectl get replicaset # Replicaset anzeigen
 $ microk8s.kubectl get all # alles anzeigen
 ```
 
 Um ... zu löschen.
 
 ```shell
-$ microk8s.kubectl delete [service/pod/deployment] <name/id>
+$ microk8s.kubectl delete [service/pod/deployment/replicaset] <name/id>
 ```
 
 ## 2.3 - Dashboard
@@ -412,9 +418,9 @@ Um das Dashboard zu aktivieren, muss folgendes getan werden.
 $ microk8s dashboard-proxy # Erlaubt zugriff auf Dashboard
 ```
 
-Jetzt kann über folgende url auf das Dashboard zugegriffen werden: __\<ip>:10443__.
-
 ![img](images/LMH670GR.png)
+
+Jetzt kann über folgende url auf das Dashboard zugegriffen werden: __\<ip>:10443__.
 
 Nun muss der zuvor im Terminal angezeigte Token eingegeben werden.
 
@@ -440,7 +446,7 @@ $ cd ~/m300/kubeconfigs/webapp/
 Da wir ja im Kapitel 1.4 ja schon ein Docker image erstellt und auf Docker Hub hochgeladen haben, können wir dieses jetzt wiederverwenden.
 
 In folgendem YAML file, wir ein Deployment erstellt, mit dem Namen webapp, und dem Image __"aarongen/webapp:1.0"__, das im Kapitel 1.4 erstellt wurde.
-nach den __---__, wird ein Service erstellt, mit dem Namen webapp-service, er hat den type (Loadbalancer (external)). der TCP port 30000 wird auf den port 80 weitergeleitet.
+nach den "__---__", wird ein Service erstellt, mit dem Namen webapp-service, er hat den type (Loadbalancer (external)). der TCP port 30000 wird auf den port 80 weitergeleitet.
 
 ```shell
 $ nano deployment.yaml
@@ -789,13 +795,13 @@ Um verschiedene aufrufe automatisch zu simulieren, wurde ein kleines Tool geschr
 $ nano curl.sh
 ```
 
-Dieses Tool macht Zehn anfragen und loggt die IP Adresse und den Hostnamen des aktuellen pods, so kann der Loadbalancer getestet werden.
+Dieses Tool macht zehn anfragen und loggt die IP Adresse und den Hostnamen des aktuellen pods, so kann der Loadbalancer getestet werden.
 
 ```shell
-rm ./curl.log
-for x in {1..10}; do
-  LOG=$(curl 10.10.200.130:30001)
-  echo -e $LOG >> curl.log
+rm ./curl.log # remove old log file
+for x in {1..10}; do # start a for loop (10 cycles)
+  LOG=$(curl 10.10.200.130:30001) # save contents of website in $LOG
+  echo -e $LOG >> curl.log # append output to curl.log file
 done
 ```
 
@@ -823,7 +829,7 @@ Es ist schön zu sehen, wie verschiedene pods verwendet werden, sogar von versch
 
 Um Jetzt zum Abschluss noch eine Applikation mit einer Datenbank als backend zu zeigen, habe ich mich für eine Nextcloud entschieden.
 
-Um die Passwärter und Usernamen im geheimen zu halten, habe ich mich dafür entschieden ein Secret zu erstellen 
+Um die Passwärter und Usernamen im geheimen zu halten, habe ich mich dafür entschieden ein Secret zu erstellen.\
 Als erstes müssen die geplantent Werte in Base64 umgewandelt werden, dies kann folgendermassen geschehen.
 
 ```shell
@@ -963,7 +969,6 @@ $ kubectl get all
 ![img](images/8JHZTG6F.png)
 
 Die Nextcloud ist jetzt unter dem Port __30003__ erreichbar.
-
 
 ![img](images/LKIJ7865.png)
 
